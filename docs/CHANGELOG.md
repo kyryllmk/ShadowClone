@@ -12,6 +12,9 @@ The format can stay simple:
 - Project roadmap and issue backlog
 - Universal session start/end workflow prompt
 - GitHub pull request template for end-of-session handoff
+- Initial Unity project scaffolding under `Assets/`, `Packages/`, and `ProjectSettings/`
+- First gameplay script pass for movement, reset flow, recording, replay, HUD feedback, and clone cleanup
+- Coding standards and Unity setup / smoke test documentation for issues `SC-02` through `SC-10`
 
 ### Changed
 
