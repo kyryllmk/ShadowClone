@@ -75,6 +75,20 @@ This repo now includes the first gameplay script pass for SC-02 through SC-10, b
 - Step off the button and confirm the door returns to its closed color and blocks movement again.
 - Record a path that leaves the clone standing on the button, then move the player through the open doorway.
 
+### SC-13 Hazard Death And Reset
+
+- Create a square or rectangle object named `Hazard` in `Level_01_Tutorial`.
+- Add a `BoxCollider2D` and enable `Is Trigger`.
+- Add `Hazard`.
+- Assign the scene's `RoomResetManager` to the hazard.
+- On `RoomSystems > RoomResetManager`, add the scene's `PuzzleButton` to `Resettable Buttons`.
+- On `RoomSystems > RoomResetManager`, add the scene's `Door` to `Resettable Doors`.
+- Place the hazard so the player can intentionally touch it during play.
+- Run into the hazard and confirm the player returns to the spawn point.
+- Confirm the active clone is cleared.
+- Confirm the button returns to idle and the door returns to closed after the reset.
+- Repeat multiple times to confirm the reset is consistent.
+
 ### SC-04 Movement And Jump
 
 - Enter Play Mode in `Level_01_Tutorial`.

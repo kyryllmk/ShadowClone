@@ -35,6 +35,14 @@ Use this checklist after wiring the scripts in the Unity editor.
 - The door becomes visually open and non-blocking while the button is pressed.
 - The replay clone can hold the button while the player passes through the door.
 
+## Hazard Reset
+
+- A `Hazard` object can be placed in the tutorial room.
+- Touching the hazard resets the room every time.
+- Hazard reset returns the player to the spawn point.
+- Hazard reset clears the active clone and recorded mechanic state.
+- Hazard reset restores linked buttons and doors to their default closed / idle state.
+
 ## Readability
 
 - HUD text changes for ready, recording, blocked, replay, and reset states.

@@ -39,6 +39,7 @@ These rules cover the first implementation slice for SC-03 and are meant to keep
 - `RoomResetManager` owns room restart coordination and spawn restoration.
 - `PuzzleButton` owns trigger overlap detection and pressed-state reporting.
 - `DoorController` owns door open/close visuals and blocking collision.
+- `Hazard` owns lethal trigger detection and forwards resets to `RoomResetManager`.
 - `MechanicHudController` owns simple text feedback to the player.
 
 ## Guardrails
