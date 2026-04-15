@@ -52,6 +52,16 @@ This repo now includes the first gameplay script pass for SC-02 through SC-10, b
 
 ## Smoke Tests
 
+### SC-11 Pressure Button
+
+- Create a square button object in `Level_01_Tutorial`.
+- Add a `BoxCollider2D` and enable `Is Trigger`.
+- Add `PuzzleButton`.
+- Assign the button's `SpriteRenderer` to `Target Renderer`.
+- Walk the player onto the button.
+- Confirm the button changes color while occupied and returns to its idle color after stepping off.
+- Trigger replay onto the button path and confirm the clone can also activate it.
+
 ### SC-04 Movement And Jump
 
 - Enter Play Mode in `Level_01_Tutorial`.

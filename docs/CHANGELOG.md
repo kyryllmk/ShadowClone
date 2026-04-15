@@ -15,6 +15,7 @@ The format can stay simple:
 - Initial Unity project scaffolding under `Assets/`, `Packages/`, and `ProjectSettings/`
 - First gameplay script pass for movement, reset flow, recording, replay, HUD feedback, and clone cleanup
 - Coding standards and Unity setup / smoke test documentation for issues `SC-02` through `SC-10`
+- Reusable `PuzzleButton` trigger script and initial smoke-test guidance for `SC-11`
 
 ### Changed
 

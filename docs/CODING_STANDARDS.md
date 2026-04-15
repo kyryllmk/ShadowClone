@@ -16,6 +16,7 @@ These rules cover the first implementation slice for SC-03 and are meant to keep
 - `Core/`: scene flow, camera framing, spawn points, room reset coordination.
 - `Gameplay/`: player movement, ground checks, and direct player-facing visuals.
 - `Clone/`: recording storage, recording input flow, clone spawn/replay, clone cleanup.
+- `Level/`: puzzle objects such as buttons, doors, hazards, and goals.
 - `UI/`: simple HUD and player-readable mechanic feedback.
 
 ## Practical Rules
@@ -36,6 +37,7 @@ These rules cover the first implementation slice for SC-03 and are meant to keep
 - `CloneActor` owns movement along recorded frames.
 - `CloneMechanicController` owns player inputs for record and replay.
 - `RoomResetManager` owns room restart coordination and spawn restoration.
+- `PuzzleButton` owns trigger overlap detection and pressed-state reporting.
 - `MechanicHudController` owns simple text feedback to the player.
 
 ## Guardrails

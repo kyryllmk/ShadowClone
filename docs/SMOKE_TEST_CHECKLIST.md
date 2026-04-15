@@ -21,6 +21,13 @@ Use this checklist after wiring the scripts in the Unity editor.
 - Only one replay clone exists at a time.
 - Reset removes the active clone and clears the last recording.
 
+## Puzzle Button
+
+- A `PuzzleButton` object can be placed in the tutorial room.
+- Walking the player onto the button changes it to its active state.
+- Stepping off the button returns it to its inactive state.
+- A replay clone can also activate the same button.
+
 ## Readability
 
 - HUD text changes for ready, recording, blocked, replay, and reset states.
