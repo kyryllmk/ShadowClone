@@ -62,6 +62,19 @@ This repo now includes the first gameplay script pass for SC-02 through SC-10, b
 - Confirm the button changes color while occupied and returns to its idle color after stepping off.
 - Trigger replay onto the button path and confirm the clone can also activate it.
 
+### SC-12 Linked Door
+
+- Create a tall square object named `Door` in `Level_01_Tutorial`.
+- Add a `BoxCollider2D`.
+- Add `DoorController`.
+- Assign the door's `BoxCollider2D` to `Blocking Collider`.
+- Assign the door's `SpriteRenderer` to `Target Renderer`.
+- Assign the scene's `PuzzleButton` to `Linked Button`.
+- Place the door so it blocks player movement while closed.
+- Walk onto the button and confirm the door changes to its open color and no longer blocks movement.
+- Step off the button and confirm the door returns to its closed color and blocks movement again.
+- Record a path that leaves the clone standing on the button, then move the player through the open doorway.
+
 ### SC-04 Movement And Jump
 
 - Enter Play Mode in `Level_01_Tutorial`.
