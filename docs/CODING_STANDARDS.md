@@ -38,6 +38,7 @@ These rules cover the first implementation slice for SC-03 and are meant to keep
 - `CloneMechanicController` owns player inputs for record and replay.
 - `RoomResetManager` owns room restart coordination and spawn restoration.
 - `PuzzleButton` owns trigger overlap detection and pressed-state reporting.
+- `DoorController` owns door open/close visuals and blocking collision.
 - `MechanicHudController` owns simple text feedback to the player.
 
 ## Guardrails

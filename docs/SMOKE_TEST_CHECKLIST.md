@@ -28,6 +28,13 @@ Use this checklist after wiring the scripts in the Unity editor.
 - Stepping off the button returns it to its inactive state.
 - A replay clone can also activate the same button.
 
+## Linked Door
+
+- A `DoorController` object can be linked to a `PuzzleButton`.
+- The door is visually closed and physically blocking when the button is idle.
+- The door becomes visually open and non-blocking while the button is pressed.
+- The replay clone can hold the button while the player passes through the door.
+
 ## Readability
 
 - HUD text changes for ready, recording, blocked, replay, and reset states.
