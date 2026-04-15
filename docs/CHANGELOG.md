@@ -17,6 +17,7 @@ The format can stay simple:
 - Coding standards and Unity setup / smoke test documentation for issues `SC-02` through `SC-10`
 - Reusable `PuzzleButton` trigger script and initial smoke-test guidance for `SC-11`
 - Reusable `DoorController` linked-door script and smoke-test guidance for `SC-12`
+- Reusable `Hazard` trigger script and expanded room reset support for `SC-13`
 
 ### Changed
 
