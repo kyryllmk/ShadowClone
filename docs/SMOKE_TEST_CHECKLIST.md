@@ -43,6 +43,13 @@ Use this checklist after wiring the scripts in the Unity editor.
 - Hazard reset clears the active clone and recorded mechanic state.
 - Hazard reset restores linked buttons and doors to their default closed / idle state.
 
+## Goal Zone
+
+- A `GoalZone` object can be placed in the tutorial room.
+- Reaching the goal with the player displays a stable completion message.
+- Player movement locks after completion.
+- Replay clones do not accidentally complete the room on their own.
+
 ## Readability
 
 - HUD text changes for ready, recording, blocked, replay, and reset states.

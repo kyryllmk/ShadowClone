@@ -39,6 +39,11 @@ namespace ShadowClone.UI
             SetText($"{reason}. Room reset.");
         }
 
+        public void ShowCompletion(string message)
+        {
+            SetText(message);
+        }
+
         private void SetText(string value)
         {
             if (statusLabel != null)
