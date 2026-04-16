@@ -18,6 +18,7 @@ The format can stay simple:
 - Reusable `PuzzleButton` trigger script and initial smoke-test guidance for `SC-11`
 - Reusable `DoorController` linked-door script and smoke-test guidance for `SC-12`
 - Reusable `Hazard` trigger script and expanded room reset support for `SC-13`
+- Reusable `GoalZone` completion trigger and smoke-test guidance for `SC-14`
 
 ### Changed
 

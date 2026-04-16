@@ -89,6 +89,19 @@ This repo now includes the first gameplay script pass for SC-02 through SC-10, b
 - Confirm the button returns to idle and the door returns to closed after the reset.
 - Repeat multiple times to confirm the reset is consistent.
 
+### SC-14 Goal Zone And Completion
+
+- Create a square object named `GoalZone` in `Level_01_Tutorial`.
+- Add a `BoxCollider2D` and enable `Is Trigger`.
+- Add `GoalZone`.
+- Assign the scene's `Player` to `Player Controller`.
+- Assign `RoomSystems > MechanicHudController` to `Mechanic Hud Controller`.
+- Leave `Load Next Scene On Complete` disabled for now unless you want an immediate scene transition.
+- Place the goal after the door so the player reaches it only after solving the room.
+- Reach the goal with the player and confirm the HUD shows a completion message.
+- Confirm the player can no longer move after completion.
+- Confirm replay clones do not trigger completion by themselves.
+
 ### SC-04 Movement And Jump
 
 - Enter Play Mode in `Level_01_Tutorial`.

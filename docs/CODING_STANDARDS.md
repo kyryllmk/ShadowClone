@@ -40,6 +40,7 @@ These rules cover the first implementation slice for SC-03 and are meant to keep
 - `PuzzleButton` owns trigger overlap detection and pressed-state reporting.
 - `DoorController` owns door open/close visuals and blocking collision.
 - `Hazard` owns lethal trigger detection and forwards resets to `RoomResetManager`.
+- `GoalZone` owns level-complete trigger detection and minimal completion handoff.
 - `MechanicHudController` owns simple text feedback to the player.
 
 ## Guardrails
