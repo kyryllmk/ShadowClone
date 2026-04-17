@@ -52,6 +52,22 @@ This repo now includes the first gameplay script pass for SC-02 through SC-10, b
 
 ## Smoke Tests
 
+### SC-15 Main Menu And Scene Start Flow
+
+- Open `MainMenu` and confirm the scene contains:
+  - a title text element
+  - a `PlayButton`
+  - a `QuitButton`
+  - `MainMenuBootstrap` with `MainMenuController`
+- In `MainMenuBootstrap > MainMenuController`, confirm `Gameplay Scene Name` is `Level_01_Tutorial`.
+- In `File > Build Settings`, confirm:
+  - `MainMenu` is scene index `0`
+  - `Level_01_Tutorial` is scene index `1`
+- Enter Play Mode while `MainMenu` is open.
+- Click `Play` and confirm the game loads `Level_01_Tutorial`.
+- Return to `MainMenu`, enter Play Mode again, click `Quit`, and confirm Play Mode stops in the editor.
+- Build a Windows player later in the packaging phase and confirm both buttons still work in standalone.
+
 ### SC-11 Pressure Button
 
 - Create a square button object in `Level_01_Tutorial`.

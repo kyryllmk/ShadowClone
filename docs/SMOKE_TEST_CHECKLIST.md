@@ -7,6 +7,13 @@ Use this checklist after wiring the scripts in the Unity editor.
 - `MainMenu` opens and Play loads `Level_01_Tutorial`.
 - `Level_01_Tutorial` can also be run directly from the editor.
 
+## Main Menu
+
+- `MainMenu` shows a clear title and entry buttons.
+- `PlayButton` loads `Level_01_Tutorial`.
+- `QuitButton` exits Play Mode in the editor.
+- Build Settings scene order starts with `MainMenu` then `Level_01_Tutorial`.
+
 ## Movement
 
 - Player moves left and right on keyboard input.
