@@ -9,19 +9,19 @@ namespace ShadowClone.UI
 
         public void ShowReady(float duration)
         {
-            SetText($"Ready. R = record ({duration:0.0}s), E = replay, Tab = reset");
+            SetText($"Ready to record. Max {duration:0.0}s.");
         }
 
         public void ShowRecordingStarted(float duration)
         {
-            SetText($"Recording... max {duration:0.0}s");
+            SetText($"Recording... {duration:0.0}s max");
         }
 
         public void ShowRecordingFinished(bool success, float duration)
         {
             SetText(success
-                ? $"Recording saved ({duration:0.0}s). Press E to replay."
-                : "Recording too short. Try another path.");
+                ? $"Recorded. Press E to replay. ({duration:0.0}s)"
+                : "Recording too short. Try again.");
         }
 
         public void ShowReplayStarted(float duration)
@@ -42,6 +42,29 @@ namespace ShadowClone.UI
         public void ShowCompletion(string message)
         {
             SetText(message);
+        }
+
+        public void Clear()
+        {
+            SetText(string.Empty);
+        }
+
+        public void ConfigureForGameplayStatus()
+        {
+            if (statusLabel == null)
+            {
+                return;
+            }
+
+            statusLabel.fontSize = 24f;
+            statusLabel.alignment = TextAlignmentOptions.TopRight;
+
+            RectTransform rect = statusLabel.rectTransform;
+            rect.anchorMin = new Vector2(1f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(1f, 1f);
+            rect.anchoredPosition = new Vector2(-24f, -24f);
+            rect.sizeDelta = new Vector2(600f, 120f);
         }
 
         private void SetText(string value)

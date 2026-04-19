@@ -52,6 +52,33 @@ This repo now includes the first gameplay script pass for SC-02 through SC-10, b
 
 ## Smoke Tests
 
+### SC-16 Pause Menu, Restart, And HUD
+
+- Enter Play Mode in `Level_01_Tutorial`.
+- Confirm a gameplay overlay appears automatically in non-menu scenes.
+- Confirm the controls prompt is visible and includes move, jump, record, replay, reset, and pause keys.
+- Press `Esc` and confirm a pause menu appears with:
+  - `Resume`
+  - `Restart Room`
+  - `Return To Menu`
+- While paused, confirm the player cannot move and recording / replay input is blocked.
+- Click `Resume` and confirm gameplay continues.
+- Pause again, click `Restart Room`, and confirm the current level reloads cleanly.
+- Pause again, click `Return To Menu`, and confirm the game loads `MainMenu`.
+
+### SC-17 Level Complete And Final Completion Flow
+
+- Open `Level_01_Tutorial` and keep its `GoalZone` wired as before.
+- Enter Play Mode and solve the room.
+- Reach the goal and confirm a completion overlay appears.
+- Because the current campaign list contains only `Level_01_Tutorial`, confirm the overlay behaves as a final completion screen by showing:
+  - a completion title
+  - a replay button
+  - a return-to-menu button
+- Click `Replay Level` and confirm the room reloads.
+- Reach the goal again, click `Return To Menu`, and confirm the project returns to `MainMenu`.
+- When more gameplay scenes are added later, update `SceneRegistry.CampaignLevels` so the same overlay can expose `Next Level`.
+
 ### SC-15 Main Menu And Scene Start Flow
 
 - Open `MainMenu` and confirm the scene contains:

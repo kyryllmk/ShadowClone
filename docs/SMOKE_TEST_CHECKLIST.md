@@ -57,6 +57,21 @@ Use this checklist after wiring the scripts in the Unity editor.
 - Player movement locks after completion.
 - Replay clones do not accidentally complete the room on their own.
 
+## Pause And Restart
+
+- `Esc` opens a pause menu in gameplay scenes.
+- Pause blocks player movement and record / replay input.
+- `Resume` returns to live gameplay cleanly.
+- `Restart Room` reloads the current level.
+- `Return To Menu` loads `MainMenu`.
+
+## Completion Flow
+
+- Reaching the goal opens a clear completion overlay.
+- The current prototype can be replayed or exited back to the menu after completion.
+- Final completion state feels intentional rather than like a debug message.
+- When multiple campaign levels exist, completion can route to the next scene in order.
+
 ## Readability
 
 - HUD text changes for ready, recording, blocked, replay, and reset states.

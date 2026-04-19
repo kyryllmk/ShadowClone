@@ -13,9 +13,20 @@ namespace ShadowClone.Clone
 
         private void Start()
         {
-            if (mechanicHudController != null && recordingController != null)
+            mechanicHudController?.ConfigureForGameplayStatus();
+            mechanicHudController?.Clear();
+
+            if (recordingController != null)
             {
-                mechanicHudController.ShowReady(recordingController.MaxRecordingDuration);
+                recordingController.RecordingFinished += HandleRecordingFinished;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (recordingController != null)
+            {
+                recordingController.RecordingFinished -= HandleRecordingFinished;
             }
         }
 
@@ -41,12 +52,7 @@ namespace ShadowClone.Clone
 
             if (recordingController.IsRecording)
             {
-                bool capturedClip = recordingController.StopRecording();
-                if (mechanicHudController != null)
-                {
-                    mechanicHudController.ShowRecordingFinished(capturedClip, recordingController.CurrentClip.Duration);
-                }
-
+                recordingController.StopRecording();
                 return;
             }
 
@@ -90,6 +96,17 @@ namespace ShadowClone.Clone
                     mechanicHudController.ShowBlocked("Clone prefab missing or clip invalid.");
                 }
             }
+        }
+
+        private void HandleRecordingFinished(RecordingClip clip)
+        {
+            if (mechanicHudController == null || clip == null)
+            {
+                return;
+            }
+
+            bool capturedClip = clip.FrameCount > 1;
+            mechanicHudController.ShowRecordingFinished(capturedClip, clip.Duration);
         }
 
         public void ResetMechanicState(string reason)
