@@ -430,6 +430,9 @@ MonoBehaviour:
   activeColor: {r: 0.35, g: 0.9, b: 0.45, a: 1}
   reactToPlayer: 1
   reactToClone: 1
+  activePulseAmplitude: 0.08
+  activePulseSpeed: 4
+  pressedScaleY: 0.82
 --- !u!61 &217809867
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -726,6 +729,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomResetManager: {fileID: 260943788}
   resetReason: Hazard hit
+  targetRenderer: {fileID: 0}
+  baseColor: {r: 1, g: 0.45, b: 0.45, a: 1}
+  pulseColor: {r: 1, g: 0.8, b: 0.35, a: 1}
+  pulseSpeed: 6
 --- !u!61 &924532921
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1054,6 +1061,10 @@ MonoBehaviour:
   idleColor: {r: 1, g: 1, b: 1, a: 1}
   airborneColor: {r: 0.9, g: 0.95, b: 1, a: 1}
   recordingColor: {r: 1, g: 0.85, b: 0.45, a: 1}
+  colorLerpSpeed: 8
+  impactRecoverSpeed: 10
+  jumpStretch: 0.12
+  landingSquash: 0.18
 --- !u!114 &1210059140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1392,6 +1403,10 @@ MonoBehaviour:
   completionMessage: Level 1 complete!
   loadNextSceneOnComplete: 0
   nextSceneName: 
+  targetRenderer: {fileID: 0}
+  idleColor: {r: 0.2, g: 0.86, b: 1, a: 1}
+  completeColor: {r: 1, g: 0.95, b: 0.45, a: 1}
+  pulseSpeed: 3
 --- !u!61 &1649930835
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1498,7 +1513,7 @@ Transform:
   m_GameObject: {fileID: 1649930833}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.5, y: -2.55, z: 0}
+  m_LocalPosition: {x: 9.5, y: -1.5, z: 0}
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1539,8 +1554,10 @@ MonoBehaviour:
   blockingCollider: {fileID: 1696415609}
   targetRenderer: {fileID: 1696415610}
   closedColor: {r: 0.21698111, g: 0.21698111, b: 0.21698111, a: 1}
-  openColor: {r: 0.49056602, g: 0.49056602, b: 0.49056602, a: 0.80784315}
+  openColor: {r: 0.21568628, g: 0.21568628, b: 0.21568628, a: 0.80784315}
   startOpen: 0
+  openScaleY: 0.2
+  transitionSpeed: 8
 --- !u!61 &1696415609
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1771,4 +1788,3 @@ SceneRoots:
   - {fileID: 1696415611}
   - {fileID: 924532923}
   - {fileID: 1649930837}
-
