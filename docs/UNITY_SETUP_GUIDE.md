@@ -100,6 +100,36 @@ This repo now includes the first gameplay script pass for SC-02 through SC-10, b
 - Start at `MainMenu`, press `Play`, and confirm `Next Level` can carry the player from level `1` through level `4`.
 - Reach the goal in `Level_04_Final` and confirm the game ends on the prototype completion overlay instead of trying to load another scene.
 
+### SC-22 To SC-24 Presentation Batch
+
+- Enter Play Mode in `MainMenu` and confirm `Play` and `Quit` produce a short confirmation sound.
+- Leave `MainMenu` open for a few seconds and confirm it has its own ambient background layer.
+- Open any gameplay scene and confirm placeholder audio plays for:
+  - jump
+  - landing
+  - record start
+  - record finish
+  - replay start
+  - button press
+  - door open / close
+  - hazard hit
+  - level complete
+- Pause with `Esc` and confirm a dedicated pause sound plays.
+- Click `Restart Room` and confirm a distinct restart sound plays before the room reloads.
+- Move from one gameplay level to the next and confirm the level-start cue plays once when the new scene opens.
+- Confirm each gameplay scene now has its own matching ambient background:
+  - `Level_01_Tutorial`
+  - `Level_02_ButtonDoor`
+  - `Level_03_HazardTiming`
+  - `Level_04_Final`
+- Confirm the player sprite color transitions smoothly instead of snapping between states.
+- Confirm the player gets a small stretch on jump and squash on landing.
+- Confirm buttons compress and pulse while held.
+- Confirm doors animate visually toward open / closed states instead of only switching collision.
+- Confirm hazards pulse to stay readable.
+- Confirm goals pulse while idle and brighten on completion.
+- Run one full playthrough from `MainMenu` to `Level_04_Final` and confirm the new feedback remains readable and not distracting.
+
 ### SC-15 Main Menu And Scene Start Flow
 
 - Open `MainMenu` and confirm the scene contains:

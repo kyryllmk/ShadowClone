@@ -14,6 +14,10 @@ namespace ShadowClone.Level
         [SerializeField] private string completionMessage = "Level complete!";
         [SerializeField] private bool loadNextSceneOnComplete;
         [SerializeField] private string nextSceneName;
+        [SerializeField] private SpriteRenderer targetRenderer;
+        [SerializeField] private Color idleColor = new Color(0.2f, 0.86f, 1f, 1f);
+        [SerializeField] private Color completeColor = new Color(1f, 0.95f, 0.45f, 1f);
+        [SerializeField] private float pulseSpeed = 3f;
 
         private Collider2D triggerCollider;
         private bool isCompleted;
@@ -25,6 +29,23 @@ namespace ShadowClone.Level
         {
             triggerCollider = GetComponent<Collider2D>();
             triggerCollider.isTrigger = true;
+        }
+
+        private void Update()
+        {
+            if (targetRenderer == null)
+            {
+                return;
+            }
+
+            if (isCompleted)
+            {
+                targetRenderer.color = Color.Lerp(targetRenderer.color, completeColor, 8f * Time.deltaTime);
+                return;
+            }
+
+            float pulse = (Mathf.Sin(Time.time * pulseSpeed) + 1f) * 0.5f;
+            targetRenderer.color = Color.Lerp(idleColor * 0.8f, idleColor, pulse);
         }
 
         private void OnValidate()

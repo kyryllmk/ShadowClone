@@ -10,12 +10,32 @@ namespace ShadowClone.Level
         [SerializeField] private Color closedColor = new Color(0.9f, 0.25f, 0.25f, 1f);
         [SerializeField] private Color openColor = new Color(0.35f, 0.95f, 0.55f, 0.35f);
         [SerializeField] private bool startOpen;
+        [SerializeField] private float openScaleY = 0.2f;
+        [SerializeField] private float transitionSpeed = 8f;
+
+        private Vector3 baseScale;
 
         public bool IsOpen { get; private set; }
+        public event System.Action<bool> StateChanged;
 
         private void Awake()
         {
+            baseScale = transform.localScale;
             ApplyState(startOpen);
+        }
+
+        private void Update()
+        {
+            Vector3 targetScale = IsOpen
+                ? new Vector3(baseScale.x, baseScale.y * openScaleY, baseScale.z)
+                : baseScale;
+            transform.localScale = Vector3.Lerp(transform.localScale, targetScale, transitionSpeed * Time.deltaTime);
+
+            if (targetRenderer != null)
+            {
+                Color targetColor = IsOpen ? openColor : closedColor;
+                targetRenderer.color = Color.Lerp(targetRenderer.color, targetColor, transitionSpeed * Time.deltaTime);
+            }
         }
 
         private void OnEnable()
@@ -70,6 +90,7 @@ namespace ShadowClone.Level
 
         private void ApplyState(bool shouldOpen)
         {
+            bool wasOpen = IsOpen;
             IsOpen = shouldOpen;
 
             if (blockingCollider != null)
@@ -77,9 +98,9 @@ namespace ShadowClone.Level
                 blockingCollider.enabled = !IsOpen;
             }
 
-            if (targetRenderer != null)
+            if (!wasOpen.Equals(IsOpen))
             {
-                targetRenderer.color = IsOpen ? openColor : closedColor;
+                StateChanged?.Invoke(IsOpen);
             }
         }
     }

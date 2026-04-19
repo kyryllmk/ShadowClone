@@ -2,6 +2,7 @@ using ShadowClone.Clone;
 using ShadowClone.Core;
 using ShadowClone.Gameplay;
 using ShadowClone.Level;
+using ShadowClone.Presentation;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -179,6 +180,7 @@ namespace ShadowClone.UI
             isPaused = paused;
             pausePanel.SetActive(paused);
             ApplyInteractiveState(paused);
+            PresentationFeedbackBootstrap.PlayPauseToggle();
         }
 
         private void ApplyInteractiveState(bool locked)
@@ -208,12 +210,14 @@ namespace ShadowClone.UI
 
         private void RestartRoom()
         {
+            PresentationFeedbackBootstrap.PlayRestartLevel();
             Time.timeScale = 1f;
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
         private void ReturnToMenu()
         {
+            PresentationFeedbackBootstrap.PlayMenuConfirm();
             Time.timeScale = 1f;
             SceneManager.LoadScene(SceneRegistry.MainMenu);
         }

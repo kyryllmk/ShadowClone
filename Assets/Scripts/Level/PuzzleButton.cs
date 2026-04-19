@@ -14,9 +14,13 @@ namespace ShadowClone.Level
         [SerializeField] private Color activeColor = new Color(0.35f, 0.9f, 0.45f, 1f);
         [SerializeField] private bool reactToPlayer = true;
         [SerializeField] private bool reactToClone = true;
+        [SerializeField] private float activePulseAmplitude = 0.08f;
+        [SerializeField] private float activePulseSpeed = 4f;
+        [SerializeField] private float pressedScaleY = 0.82f;
 
         private readonly HashSet<Collider2D> occupants = new HashSet<Collider2D>();
         private Collider2D triggerCollider;
+        private Vector3 baseScale;
 
         public event Action<bool> PressedStateChanged;
 
@@ -26,7 +30,31 @@ namespace ShadowClone.Level
         {
             triggerCollider = GetComponent<Collider2D>();
             triggerCollider.isTrigger = true;
+            baseScale = transform.localScale;
             UpdateVisual();
+        }
+
+        private void Update()
+        {
+            float targetY = IsPressed ? pressedScaleY : 1f;
+            Vector3 targetScale = new Vector3(baseScale.x, baseScale.y * targetY, baseScale.z);
+            transform.localScale = Vector3.Lerp(transform.localScale, targetScale, 10f * Time.deltaTime);
+
+            if (targetRenderer == null)
+            {
+                return;
+            }
+
+            if (IsPressed)
+            {
+                float pulse = 1f + Mathf.Sin(Time.time * activePulseSpeed) * activePulseAmplitude;
+                targetRenderer.color = activeColor * pulse;
+                targetRenderer.color = new Color(targetRenderer.color.r, targetRenderer.color.g, targetRenderer.color.b, 1f);
+            }
+            else
+            {
+                targetRenderer.color = Color.Lerp(targetRenderer.color, inactiveColor, 10f * Time.deltaTime);
+            }
         }
 
         private void OnValidate()

@@ -14,15 +14,23 @@ namespace ShadowClone.Gameplay
 
         private Rigidbody2D body;
         private float moveInput;
+        private bool wasGrounded;
 
         public bool IsGrounded => groundCheck != null && groundCheck.IsGrounded;
         public bool IsMovementLocked { get; private set; }
         public Vector2 Velocity => body != null ? body.velocity : Vector2.zero;
         public float FacingDirection { get; private set; } = 1f;
+        public event System.Action Jumped;
+        public event System.Action Landed;
 
         private void Awake()
         {
             body = GetComponent<Rigidbody2D>();
+        }
+
+        private void Start()
+        {
+            wasGrounded = IsGrounded;
         }
 
         private void Update()
@@ -47,7 +55,17 @@ namespace ShadowClone.Gameplay
             if (Input.GetButtonDown("Jump") && IsGrounded)
             {
                 body.velocity = new Vector2(body.velocity.x, jumpForce);
+                Jumped?.Invoke();
+                wasGrounded = false;
             }
+
+            bool isGroundedNow = IsGrounded;
+            if (!wasGrounded && isGroundedNow)
+            {
+                Landed?.Invoke();
+            }
+
+            wasGrounded = isGroundedNow;
         }
 
         private void FixedUpdate()
