@@ -72,6 +72,15 @@ Use this checklist after wiring the scripts in the Unity editor.
 - Final completion state feels intentional rather than like a debug message.
 - When multiple campaign levels exist, completion can route to the next scene in order.
 
+## Campaign Levels
+
+- `Level_01_Tutorial` introduces the first safe button-door solve.
+- `Level_02_ButtonDoor` requires a longer button hold and run to the goal.
+- `Level_03_HazardTiming` adds a hazard strip after the door interaction.
+- `Level_04_Final` combines button-door timing and the widest hazard strip in the campaign.
+- `Next Level` can carry the player from level `1` through level `4`.
+- `Level_04_Final` ends on the prototype completion screen rather than loading another room.
+
 ## Readability
 
 - HUD text changes for ready, recording, blocked, replay, and reset states.

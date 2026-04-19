@@ -11,4 +11,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level_01_Tutorial.unity
     guid: 01b730f569cb5a34cbc5327ca378168c
+  - enabled: 1
+    path: Assets/Scenes/Level_02_ButtonDoor.unity
+    guid: 3e42c4135b1f49dd9f8f0fc7b58efba4
+  - enabled: 1
+    path: Assets/Scenes/Level_03_HazardTiming.unity
+    guid: 3555f50a6be84fbab95be7dbe23dfbfe
+  - enabled: 1
+    path: Assets/Scenes/Level_04_Final.unity
+    guid: 4c0f0b68d625484680f329bd4057e9da
   m_configObjects: {}

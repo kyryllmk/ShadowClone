@@ -20,6 +20,7 @@ The format can stay simple:
 - Reusable `Hazard` trigger script and expanded room reset support for `SC-13`
 - Reusable `GoalZone` completion trigger and smoke-test guidance for `SC-14`
 - Runtime gameplay UI bootstrap for pause, restart, return-to-menu, and final completion flow for `SC-16` and `SC-17`
+- Initial four-level campaign scene set and progression order for `SC-18` through `SC-21`
 
 ### Changed
 

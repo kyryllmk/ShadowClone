@@ -10,6 +10,7 @@ These rules cover the first implementation slice for SC-03 and are meant to keep
 - Use sub-namespaces by responsibility: `ShadowClone.Core`, `ShadowClone.Gameplay`, `ShadowClone.Clone`, `ShadowClone.UI`.
 - Use `PascalCase` for class names, public methods, and serialized property labels.
 - Keep scene names explicit and ordered: `MainMenu`, `Level_01_Tutorial`, `Level_02_ButtonDoor`, `Level_03_HazardTiming`, `Level_04_Final`.
+- Keep campaign scene order mirrored in `SceneRegistry.CampaignLevels` and in Build Settings.
 
 ## Script Ownership
 

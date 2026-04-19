@@ -17,9 +17,15 @@ This repo now includes the first gameplay script pass for SC-02 through SC-10, b
 3. Create these scenes under `Assets/Scenes/`:
    - `MainMenu`
    - `Level_01_Tutorial`
+   - `Level_02_ButtonDoor`
+   - `Level_03_HazardTiming`
+   - `Level_04_Final`
 4. Add the scenes to Build Settings in this order:
    - `MainMenu`
    - `Level_01_Tutorial`
+   - `Level_02_ButtonDoor`
+   - `Level_03_HazardTiming`
+   - `Level_04_Final`
 5. Make `MainMenu` scene index `0`.
 
 ## Suggested Scene Wiring
@@ -71,13 +77,28 @@ This repo now includes the first gameplay script pass for SC-02 through SC-10, b
 - Open `Level_01_Tutorial` and keep its `GoalZone` wired as before.
 - Enter Play Mode and solve the room.
 - Reach the goal and confirm a completion overlay appears.
-- Because the current campaign list contains only `Level_01_Tutorial`, confirm the overlay behaves as a final completion screen by showing:
+- Because the campaign list now includes `Level_01_Tutorial` through `Level_04_Final`, confirm the overlay shows `Next Level` in levels `1` to `3`.
+- Reach the goal in `Level_04_Final` and confirm the overlay behaves as a final completion screen by showing:
   - a completion title
   - a replay button
   - a return-to-menu button
-- Click `Replay Level` and confirm the room reloads.
+- Click `Replay Level` and confirm the current room reloads.
 - Reach the goal again, click `Return To Menu`, and confirm the project returns to `MainMenu`.
-- When more gameplay scenes are added later, update `SceneRegistry.CampaignLevels` so the same overlay can expose `Next Level`.
+
+### SC-18 To SC-21 Level Content Batch
+
+- Open each campaign scene directly and confirm it loads without missing references:
+  - `Level_01_Tutorial`
+  - `Level_02_ButtonDoor`
+  - `Level_03_HazardTiming`
+  - `Level_04_Final`
+- Confirm the room pacing escalates across the scenes:
+  - Level 1 teaches the basic button-door solve with no hazard pressure in the path
+  - Level 2 stretches the button-door timing into a longer run
+  - Level 3 adds a hazard strip after the door
+  - Level 4 combines the longer run with a wider hazard strip and the final goal
+- Start at `MainMenu`, press `Play`, and confirm `Next Level` can carry the player from level `1` through level `4`.
+- Reach the goal in `Level_04_Final` and confirm the game ends on the prototype completion overlay instead of trying to load another scene.
 
 ### SC-15 Main Menu And Scene Start Flow
 

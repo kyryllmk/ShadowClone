@@ -4,11 +4,17 @@ namespace ShadowClone.Core
     {
         public const string MainMenu = "MainMenu";
         public const string Tutorial = "Level_01_Tutorial";
+        public const string ButtonDoor = "Level_02_ButtonDoor";
+        public const string HazardTiming = "Level_03_HazardTiming";
+        public const string Final = "Level_04_Final";
         public const string Prototype = "Gameplay_Prototype";
 
         public static readonly string[] CampaignLevels =
         {
-            Tutorial
+            Tutorial,
+            ButtonDoor,
+            HazardTiming,
+            Final
         };
 
         public static bool TryGetNextCampaignScene(string currentSceneName, out string nextSceneName)
