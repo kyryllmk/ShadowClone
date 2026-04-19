@@ -18,6 +18,7 @@ These rules cover the first implementation slice for SC-03 and are meant to keep
 - `Clone/`: recording storage, recording input flow, clone spawn/replay, clone cleanup.
 - `Level/`: puzzle objects such as buttons, doors, hazards, and goals.
 - `UI/`: simple HUD and player-readable mechanic feedback.
+- `UI/GameplayUiBootstrap` owns runtime pause / completion overlays for gameplay scenes.
 
 ## Practical Rules
 
@@ -42,6 +43,7 @@ These rules cover the first implementation slice for SC-03 and are meant to keep
 - `Hazard` owns lethal trigger detection and forwards resets to `RoomResetManager`.
 - `GoalZone` owns level-complete trigger detection and minimal completion handoff.
 - `MechanicHudController` owns simple text feedback to the player.
+- `GameplayUiBootstrap` owns pause, restart, return-to-menu, and completion-screen wiring.
 
 ## Guardrails
 

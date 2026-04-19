@@ -1,3 +1,4 @@
+using System;
 using ShadowClone.Gameplay;
 using ShadowClone.UI;
 using UnityEngine;
@@ -18,6 +19,7 @@ namespace ShadowClone.Level
         private bool isCompleted;
 
         public bool IsCompleted => isCompleted;
+        public event Action Completed;
 
         private void Awake()
         {
@@ -49,6 +51,7 @@ namespace ShadowClone.Level
             isCompleted = true;
             playerController?.SetMovementLocked(true);
             mechanicHudController?.ShowCompletion(completionMessage);
+            Completed?.Invoke();
 
             if (loadNextSceneOnComplete && !string.IsNullOrWhiteSpace(nextSceneName))
             {
