@@ -7,7 +7,7 @@ These rules cover the first implementation slice for SC-03 and are meant to keep
 ## Naming
 
 - Use the root namespace `ShadowClone`.
-- Use sub-namespaces by responsibility: `ShadowClone.Core`, `ShadowClone.Gameplay`, `ShadowClone.Clone`, `ShadowClone.UI`.
+- Use sub-namespaces by responsibility: `ShadowClone.Core`, `ShadowClone.Gameplay`, `ShadowClone.Clone`, `ShadowClone.Level`, `ShadowClone.UI`, `ShadowClone.Presentation`.
 - Use `PascalCase` for class names, public methods, and serialized property labels.
 - Keep scene names explicit and ordered: `MainMenu`, `Level_01_Tutorial`, `Level_02_ButtonDoor`, `Level_03_HazardTiming`, `Level_04_Final`.
 - Keep campaign scene order mirrored in `SceneRegistry.CampaignLevels` and in Build Settings.
@@ -20,6 +20,7 @@ These rules cover the first implementation slice for SC-03 and are meant to keep
 - `Level/`: puzzle objects such as buttons, doors, hazards, and goals.
 - `UI/`: simple HUD and player-readable mechanic feedback.
 - `UI/GameplayUiBootstrap` owns runtime pause / completion overlays for gameplay scenes.
+- `Presentation/`: runtime audio and visual polish bootstrap behavior.
 
 ## Practical Rules
 
@@ -45,6 +46,7 @@ These rules cover the first implementation slice for SC-03 and are meant to keep
 - `GoalZone` owns level-complete trigger detection and minimal completion handoff.
 - `MechanicHudController` owns simple text feedback to the player.
 - `GameplayUiBootstrap` owns pause, restart, return-to-menu, and completion-screen wiring.
+- `PresentationFeedbackBootstrap` owns runtime placeholder SFX hookups for moment-to-moment gameplay feedback.
 
 ## Guardrails
 

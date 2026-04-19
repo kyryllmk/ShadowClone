@@ -1,3 +1,4 @@
+using ShadowClone.Presentation;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,11 +10,13 @@ namespace ShadowClone.Core
 
         public void Play()
         {
+            PresentationFeedbackBootstrap.PlayMenuConfirm();
             SceneManager.LoadScene(gameplaySceneName);
         }
 
         public void Quit()
         {
+            PresentationFeedbackBootstrap.PlayMenuConfirm();
             if (Application.isEditor)
             {
 #if UNITY_EDITOR

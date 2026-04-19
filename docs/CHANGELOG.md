@@ -21,6 +21,8 @@ The format can stay simple:
 - Reusable `GoalZone` completion trigger and smoke-test guidance for `SC-14`
 - Runtime gameplay UI bootstrap for pause, restart, return-to-menu, and final completion flow for `SC-16` and `SC-17`
 - Initial four-level campaign scene set and progression order for `SC-18` through `SC-21`
+- Runtime placeholder audio cues, stronger object feedback, and first presentation tuning pass for `SC-22` through `SC-24`
+- Scene-specific ambient music layers and dedicated pause / restart / level-start cues
 
 ### Changed
 

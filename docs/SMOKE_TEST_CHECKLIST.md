@@ -81,6 +81,27 @@ Use this checklist after wiring the scripts in the Unity editor.
 - `Next Level` can carry the player from level `1` through level `4`.
 - `Level_04_Final` ends on the prototype completion screen rather than loading another room.
 
+## Presentation
+
+- Jump and landing both produce short readable audio feedback.
+- Start recording, stop recording, replay, button press, door open/close, hazard hit, and level completion all produce distinct audio cues.
+- Main menu `Play` and `Quit` produce a confirmation sound.
+- Pause toggle produces a dedicated sound.
+- Restarting a room produces a dedicated restart sound.
+- Entering a gameplay level produces a level-start sound.
+- `MainMenu`, `Level_01_Tutorial`, `Level_02_ButtonDoor`, `Level_03_HazardTiming`, and `Level_04_Final` each have their own matching ambient loop or background music layer.
+- Player feedback transitions smoothly between idle, airborne, and recording states.
+- Buttons visibly compress and pulse while held.
+- Doors visually shrink/fade open instead of only toggling collision.
+- Hazards pulse clearly enough to read as dangerous at a glance.
+- Goals pulse while idle and brighten on completion.
+
+## Tuning
+
+- Tutorial text and mechanic status no longer overlap.
+- HUD remains readable during record / replay / reset states.
+- Level escalation still feels fair after the polish pass.
+
 ## Readability
 
 - HUD text changes for ready, recording, blocked, replay, and reset states.

@@ -27,6 +27,7 @@ If added:
 
 - Use one subtle ambient sci-fi loop for gameplay
 - Use one lightweight menu loop if available
+- Different gameplay loops per level are acceptable if they stay subtle and preserve the same sci-fi mood
 
 Music is lower priority than responsive sound effects.
 
@@ -36,6 +37,7 @@ Music is lower priority than responsive sound effects.
 - Avoid loud or harsh sounds
 - Make hazards and success states distinct
 - Lower music volume under UI and gameplay feedback
+- Transition / UI sounds should stay shorter and quieter than gameplay feedback
 
 ## Implementation Notes
 
@@ -43,6 +45,7 @@ Music is lower priority than responsive sound effects.
 - Use inspector-assigned audio clips
 - Avoid complex dynamic music systems
 - Ship with a tiny, polished set instead of many weak sounds
+- Runtime-generated placeholder tones are acceptable during the presentation batch before final sourced audio is chosen
 
 ## Asset Sourcing
 
