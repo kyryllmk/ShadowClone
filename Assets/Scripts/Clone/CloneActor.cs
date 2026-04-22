@@ -6,12 +6,37 @@ namespace ShadowClone.Clone
 {
     public class CloneActor : MonoBehaviour
     {
+        [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private Color idleColor = new Color(0.56f, 0.3f, 1f, 0.65f);
+        [SerializeField] private Color highlightColor = new Color(0.28f, 0.9f, 1f, 0.82f);
+        [SerializeField] private Color silhouetteColor = new Color(0.04f, 0.02f, 0.12f, 0.72f);
+        [SerializeField] private float pulseSpeed = 5f;
+        [SerializeField] private float cloneHeightScale = 0.985f;
+
         private IReadOnlyList<RecordedFrame> frames;
         private float replayTime;
         private int frameIndex;
         private bool isPlaying;
+        private Vector3 baseScale = Vector3.one;
+        private SpriteRenderer silhouetteRenderer;
 
         public event Action ReplayFinished;
+
+        private void Awake()
+        {
+            baseScale = transform.localScale;
+
+            if (spriteRenderer == null)
+            {
+                spriteRenderer = GetComponent<SpriteRenderer>();
+            }
+
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = idleColor;
+                CreateSilhouetteRenderer();
+            }
+        }
 
         public void Play(IReadOnlyList<RecordedFrame> sourceFrames)
         {
@@ -32,6 +57,17 @@ namespace ShadowClone.Clone
 
         private void Update()
         {
+            if (spriteRenderer != null)
+            {
+                float pulse = (Mathf.Sin(Time.time * pulseSpeed) + 1f) * 0.5f;
+                spriteRenderer.color = Color.Lerp(idleColor, highlightColor, pulse);
+            }
+
+            if (silhouetteRenderer != null)
+            {
+                silhouetteRenderer.color = silhouetteColor;
+            }
+
             if (!isPlaying || frames == null || frames.Count == 0)
             {
                 return;
@@ -68,9 +104,30 @@ namespace ShadowClone.Clone
 
         private void ApplyFacing(float facingDirection)
         {
-            Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x) * Mathf.Sign(facingDirection == 0f ? 1f : facingDirection);
-            transform.localScale = scale;
+            float facing = Mathf.Sign(facingDirection == 0f ? 1f : facingDirection);
+            transform.localScale = new Vector3(
+                Mathf.Abs(baseScale.x) * facing,
+                Mathf.Abs(baseScale.y) * cloneHeightScale,
+                baseScale.z);
+        }
+
+        private void CreateSilhouetteRenderer()
+        {
+            if (spriteRenderer == null || silhouetteRenderer != null)
+            {
+                return;
+            }
+
+            GameObject silhouetteObject = new GameObject("CloneSilhouette");
+            silhouetteObject.transform.SetParent(spriteRenderer.transform, false);
+            silhouetteObject.transform.localPosition = new Vector3(0.04f, -0.02f, 0f);
+            silhouetteObject.transform.localScale = new Vector3(1.16f, 1.16f, 1f);
+
+            silhouetteRenderer = silhouetteObject.AddComponent<SpriteRenderer>();
+            silhouetteRenderer.sprite = spriteRenderer.sprite;
+            silhouetteRenderer.sortingLayerID = spriteRenderer.sortingLayerID;
+            silhouetteRenderer.sortingOrder = spriteRenderer.sortingOrder - 1;
+            silhouetteRenderer.color = silhouetteColor;
         }
     }
 }

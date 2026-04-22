@@ -426,8 +426,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetRenderer: {fileID: 217809868}
-  inactiveColor: {r: 0.55, g: 0.2, b: 0.2, a: 1}
-  activeColor: {r: 0.35, g: 0.9, b: 0.45, a: 1}
+  inactiveColor: {r: 0.18, g: 0.38, b: 0.54, a: 1}
+  activeColor: {r: 0.78, g: 0.96, b: 1, a: 1}
   reactToPlayer: 1
   reactToClone: 1
   activePulseAmplitude: 0.08
@@ -730,8 +730,8 @@ MonoBehaviour:
   roomResetManager: {fileID: 260943788}
   resetReason: Hazard hit
   targetRenderer: {fileID: 0}
-  baseColor: {r: 1, g: 0.45, b: 0.45, a: 1}
-  pulseColor: {r: 1, g: 0.8, b: 0.35, a: 1}
+  baseColor: {r: 0.96, g: 0.18, b: 0.1, a: 1}
+  pulseColor: {r: 1, g: 0.48, b: 0.08, a: 1}
   pulseSpeed: 6
 --- !u!61 &924532921
 BoxCollider2D:
@@ -882,7 +882,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.023529412, g: 0.039215688, b: 0.0627451, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1058,9 +1058,9 @@ MonoBehaviour:
   playerController: {fileID: 1210059141}
   recordingController: {fileID: 260943793}
   spriteRenderer: {fileID: 1210059144}
-  idleColor: {r: 1, g: 1, b: 1, a: 1}
-  airborneColor: {r: 0.9, g: 0.95, b: 1, a: 1}
-  recordingColor: {r: 1, g: 0.85, b: 0.45, a: 1}
+  idleColor: {r: 0.88, g: 0.98, b: 1, a: 1}
+  airborneColor: {r: 0.42, g: 0.9, b: 1, a: 1}
+  recordingColor: {r: 0.74, g: 0.98, b: 1, a: 1}
   colorLerpSpeed: 8
   impactRecoverSpeed: 10
   jumpStretch: 0.12
@@ -1404,8 +1404,8 @@ MonoBehaviour:
   loadNextSceneOnComplete: 0
   nextSceneName: 
   targetRenderer: {fileID: 0}
-  idleColor: {r: 0.2, g: 0.86, b: 1, a: 1}
-  completeColor: {r: 1, g: 0.95, b: 0.45, a: 1}
+  idleColor: {r: 0.72, g: 1, b: 0.2, a: 1}
+  completeColor: {r: 0.56, g: 1, b: 1, a: 1}
   pulseSpeed: 3
 --- !u!61 &1649930835
 BoxCollider2D:
@@ -1553,8 +1553,8 @@ MonoBehaviour:
   linkedButton: {fileID: 217809866}
   blockingCollider: {fileID: 1696415609}
   targetRenderer: {fileID: 1696415610}
-  closedColor: {r: 0.21698111, g: 0.21698111, b: 0.21698111, a: 1}
-  openColor: {r: 0.21568628, g: 0.21568628, b: 0.21568628, a: 0.80784315}
+  closedColor: {r: 0.18, g: 0.9, b: 1, a: 1}
+  openColor: {r: 0.58, g: 1, b: 1, a: 0.32}
   startOpen: 0
   openScaleY: 0.2
   transitionSpeed: 8

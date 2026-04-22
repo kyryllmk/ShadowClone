@@ -7,13 +7,14 @@ namespace ShadowClone.Level
         [SerializeField] private PuzzleButton linkedButton;
         [SerializeField] private Collider2D blockingCollider;
         [SerializeField] private SpriteRenderer targetRenderer;
-        [SerializeField] private Color closedColor = new Color(0.9f, 0.25f, 0.25f, 1f);
-        [SerializeField] private Color openColor = new Color(0.35f, 0.95f, 0.55f, 0.35f);
+        [SerializeField] private Color closedColor = new Color(0.18f, 0.9f, 1f, 1f);
+        [SerializeField] private Color openColor = new Color(0.58f, 1f, 1f, 0.32f);
         [SerializeField] private bool startOpen;
         [SerializeField] private float openScaleY = 0.2f;
         [SerializeField] private float transitionSpeed = 8f;
 
         private Vector3 baseScale;
+        private SpriteRenderer glowRenderer;
 
         public bool IsOpen { get; private set; }
         public event System.Action<bool> StateChanged;
@@ -21,6 +22,7 @@ namespace ShadowClone.Level
         private void Awake()
         {
             baseScale = transform.localScale;
+            CreateGlowRenderer();
             ApplyState(startOpen);
         }
 
@@ -35,6 +37,12 @@ namespace ShadowClone.Level
             {
                 Color targetColor = IsOpen ? openColor : closedColor;
                 targetRenderer.color = Color.Lerp(targetRenderer.color, targetColor, transitionSpeed * Time.deltaTime);
+            }
+
+            if (glowRenderer != null)
+            {
+                Color glowColor = IsOpen ? new Color(0.56f, 1f, 1f, 0.18f) : new Color(0.18f, 0.9f, 1f, 0.28f);
+                glowRenderer.color = Color.Lerp(glowRenderer.color, glowColor, transitionSpeed * Time.deltaTime);
             }
         }
 
@@ -102,6 +110,25 @@ namespace ShadowClone.Level
             {
                 StateChanged?.Invoke(IsOpen);
             }
+        }
+
+        private void CreateGlowRenderer()
+        {
+            if (targetRenderer == null || glowRenderer != null)
+            {
+                return;
+            }
+
+            GameObject glowObject = new GameObject("DoorGlow");
+            glowObject.transform.SetParent(targetRenderer.transform, false);
+            glowObject.transform.localPosition = Vector3.zero;
+            glowObject.transform.localScale = Vector3.one * 1.18f;
+
+            glowRenderer = glowObject.AddComponent<SpriteRenderer>();
+            glowRenderer.sprite = targetRenderer.sprite;
+            glowRenderer.sortingLayerID = targetRenderer.sortingLayerID;
+            glowRenderer.sortingOrder = targetRenderer.sortingOrder - 1;
+            glowRenderer.color = new Color(0.18f, 0.9f, 1f, 0.28f);
         }
     }
 }
