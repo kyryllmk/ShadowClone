@@ -1,4 +1,5 @@
 using System;
+using ShadowClone.Core;
 using ShadowClone.Gameplay;
 using ShadowClone.UI;
 using UnityEngine;
@@ -14,6 +15,8 @@ namespace ShadowClone.Level
         [SerializeField] private string completionMessage = "Level complete!";
         [SerializeField] private bool loadNextSceneOnComplete;
         [SerializeField] private string nextSceneName;
+        [SerializeField] private bool saveProgressOnComplete = true;
+        [SerializeField] private int completedLevelNumber;
         [SerializeField] private SpriteRenderer targetRenderer;
         [SerializeField] private Color idleColor = new Color(0.2f, 0.86f, 1f, 1f);
         [SerializeField] private Color completeColor = new Color(1f, 0.95f, 0.45f, 1f);
@@ -72,6 +75,19 @@ namespace ShadowClone.Level
             isCompleted = true;
             playerController?.SetMovementLocked(true);
             mechanicHudController?.ShowCompletion(completionMessage);
+
+            if (saveProgressOnComplete)
+            {
+                if (completedLevelNumber >= LevelProgressManager.FirstLevel && completedLevelNumber <= LevelProgressManager.MaxLevel)
+                {
+                    LevelProgressManager.CompleteLevel(completedLevelNumber);
+                }
+                else
+                {
+                    LevelProgressManager.TryCompleteCurrentScene();
+                }
+            }
+
             Completed?.Invoke();
 
             if (loadNextSceneOnComplete && !string.IsNullOrWhiteSpace(nextSceneName))
