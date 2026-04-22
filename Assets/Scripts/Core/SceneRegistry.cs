@@ -3,6 +3,7 @@ namespace ShadowClone.Core
     public static class SceneRegistry
     {
         public const string MainMenu = "MainMenu";
+        public const string LevelSelect = "LevelSelect";
         public const string Tutorial = "Level_01_Tutorial";
         public const string ButtonDoor = "Level_02_ButtonDoor";
         public const string HazardTiming = "Level_03_HazardTiming";

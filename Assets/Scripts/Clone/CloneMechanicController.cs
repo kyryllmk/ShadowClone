@@ -74,13 +74,13 @@ namespace ShadowClone.Clone
 
             if (recordingController.IsRecording)
             {
-                mechanicHudController?.ShowBlocked("Stop recording before replaying.");
+                mechanicHudController?.ShowBlocked("RECORDING");
                 return;
             }
 
             if (!recordingController.HasRecording)
             {
-                mechanicHudController?.ShowBlocked("Record a path before replaying.");
+                mechanicHudController?.ShowBlocked("READY");
                 return;
             }
 
@@ -93,7 +93,7 @@ namespace ShadowClone.Clone
                 }
                 else
                 {
-                    mechanicHudController.ShowBlocked("Clone prefab missing or clip invalid.");
+                    mechanicHudController.ShowBlocked("FAILED");
                 }
             }
         }

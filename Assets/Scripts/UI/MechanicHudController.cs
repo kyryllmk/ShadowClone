@@ -9,24 +9,22 @@ namespace ShadowClone.UI
 
         public void ShowReady(float duration)
         {
-            SetText($"Ready to record. Max {duration:0.0}s.");
+            SetText("READY");
         }
 
         public void ShowRecordingStarted(float duration)
         {
-            SetText($"Recording... {duration:0.0}s max");
+            SetText("RECORDING");
         }
 
         public void ShowRecordingFinished(bool success, float duration)
         {
-            SetText(success
-                ? $"Recorded. Press E to replay. ({duration:0.0}s)"
-                : "Recording too short. Try again.");
+            SetText(success ? "RECORDED" : "FAILED");
         }
 
         public void ShowReplayStarted(float duration)
         {
-            SetText($"Replay started ({duration:0.0}s).");
+            SetText("REPLAYING");
         }
 
         public void ShowBlocked(string message)
@@ -36,12 +34,12 @@ namespace ShadowClone.UI
 
         public void ShowReset(string reason)
         {
-            SetText($"{reason}. Room reset.");
+            SetText("RESET");
         }
 
         public void ShowCompletion(string message)
         {
-            SetText(message);
+            SetText(string.IsNullOrWhiteSpace(message) ? "COMPLETE" : message);
         }
 
         public void Clear()
@@ -56,22 +54,24 @@ namespace ShadowClone.UI
                 return;
             }
 
-            statusLabel.fontSize = 24f;
+            TypographyTheme.ApplyState(statusLabel);
+            statusLabel.fontSize = 26f;
             statusLabel.alignment = TextAlignmentOptions.TopRight;
+            statusLabel.enableWordWrapping = false;
 
             RectTransform rect = statusLabel.rectTransform;
             rect.anchorMin = new Vector2(1f, 1f);
             rect.anchorMax = new Vector2(1f, 1f);
             rect.pivot = new Vector2(1f, 1f);
             rect.anchoredPosition = new Vector2(-24f, -24f);
-            rect.sizeDelta = new Vector2(600f, 120f);
+            rect.sizeDelta = new Vector2(280f, 48f);
         }
 
         private void SetText(string value)
         {
             if (statusLabel != null)
             {
-                statusLabel.text = value;
+                statusLabel.text = TypographyTheme.NormalizeToken(value);
             }
         }
     }
