@@ -10,8 +10,8 @@ namespace ShadowClone.Level
     public class PuzzleButton : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer targetRenderer;
-        [SerializeField] private Color inactiveColor = new Color(0.55f, 0.2f, 0.2f, 1f);
-        [SerializeField] private Color activeColor = new Color(0.35f, 0.9f, 0.45f, 1f);
+        [SerializeField] private Color inactiveColor = new Color(0.18f, 0.38f, 0.54f, 1f);
+        [SerializeField] private Color activeColor = new Color(0.78f, 0.96f, 1f, 1f);
         [SerializeField] private bool reactToPlayer = true;
         [SerializeField] private bool reactToClone = true;
         [SerializeField] private float activePulseAmplitude = 0.08f;
@@ -21,6 +21,7 @@ namespace ShadowClone.Level
         private readonly HashSet<Collider2D> occupants = new HashSet<Collider2D>();
         private Collider2D triggerCollider;
         private Vector3 baseScale;
+        private SpriteRenderer glowRenderer;
 
         public event Action<bool> PressedStateChanged;
 
@@ -31,6 +32,7 @@ namespace ShadowClone.Level
             triggerCollider = GetComponent<Collider2D>();
             triggerCollider.isTrigger = true;
             baseScale = transform.localScale;
+            CreateGlowRenderer();
             UpdateVisual();
         }
 
@@ -50,10 +52,18 @@ namespace ShadowClone.Level
                 float pulse = 1f + Mathf.Sin(Time.time * activePulseSpeed) * activePulseAmplitude;
                 targetRenderer.color = activeColor * pulse;
                 targetRenderer.color = new Color(targetRenderer.color.r, targetRenderer.color.g, targetRenderer.color.b, 1f);
+                if (glowRenderer != null)
+                {
+                    glowRenderer.color = new Color(activeColor.r, activeColor.g, activeColor.b, 0.22f + ((pulse - 1f) * 0.4f));
+                }
             }
             else
             {
                 targetRenderer.color = Color.Lerp(targetRenderer.color, inactiveColor, 10f * Time.deltaTime);
+                if (glowRenderer != null)
+                {
+                    glowRenderer.color = Color.Lerp(glowRenderer.color, new Color(inactiveColor.r, inactiveColor.g, inactiveColor.b, 0.08f), 10f * Time.deltaTime);
+                }
             }
         }
 
@@ -135,6 +145,32 @@ namespace ShadowClone.Level
             {
                 targetRenderer.color = IsPressed ? activeColor : inactiveColor;
             }
+
+            if (glowRenderer != null)
+            {
+                Color color = IsPressed
+                    ? new Color(activeColor.r, activeColor.g, activeColor.b, 0.22f)
+                    : new Color(inactiveColor.r, inactiveColor.g, inactiveColor.b, 0.08f);
+                glowRenderer.color = color;
+            }
+        }
+
+        private void CreateGlowRenderer()
+        {
+            if (targetRenderer == null || glowRenderer != null)
+            {
+                return;
+            }
+
+            GameObject glowObject = new GameObject("ButtonGlow");
+            glowObject.transform.SetParent(targetRenderer.transform, false);
+            glowObject.transform.localPosition = Vector3.zero;
+            glowObject.transform.localScale = Vector3.one * 1.18f;
+
+            glowRenderer = glowObject.AddComponent<SpriteRenderer>();
+            glowRenderer.sprite = targetRenderer.sprite;
+            glowRenderer.sortingLayerID = targetRenderer.sortingLayerID;
+            glowRenderer.sortingOrder = targetRenderer.sortingOrder - 1;
         }
     }
 }
