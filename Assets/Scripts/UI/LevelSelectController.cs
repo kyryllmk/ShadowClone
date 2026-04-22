@@ -155,7 +155,7 @@ namespace ShadowClone.UI
                 Destroy(child.gameObject);
             }
 
-            GameObject background = CreateImage("Background", rootCanvas.transform, new Color(0.03f, 0.05f, 0.08f, 1f));
+            GameObject background = CreateImage("Background", rootCanvas.transform, new Color(0.02f, 0.04f, 0.06f, 0.28f));
             RectTransform backgroundRect = background.GetComponent<RectTransform>();
             backgroundRect.anchorMin = Vector2.zero;
             backgroundRect.anchorMax = Vector2.one;
