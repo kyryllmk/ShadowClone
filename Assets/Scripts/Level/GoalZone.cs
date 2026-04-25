@@ -1,6 +1,7 @@
 using System;
 using ShadowClone.Core;
 using ShadowClone.Gameplay;
+using ShadowClone.Presentation;
 using ShadowClone.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -53,11 +54,12 @@ namespace ShadowClone.Level
                 return;
             }
 
-            float pulse = (Mathf.Sin(Time.time * pulseSpeed) + 1f) * 0.5f;
+            float localPulse = (Mathf.Sin(Time.time * pulseSpeed) + 1f) * 0.5f;
+            float pulse = Mathf.Clamp01(PresentationFeedbackBootstrap.BeatPulse01 + localPulse * 0.1f);
             targetRenderer.color = Color.Lerp(idleColor * 0.8f, idleColor, pulse);
             if (glowRenderer != null)
             {
-                glowRenderer.color = Color.Lerp(new Color(0.48f, 1f, 0.18f, 0.08f), new Color(0.72f, 1f, 0.2f, 0.24f), pulse);
+                glowRenderer.color = Color.Lerp(new Color(0.48f, 1f, 0.18f, 0.08f), new Color(0.72f, 1f, 0.2f, 0.3f), pulse);
             }
         }
 

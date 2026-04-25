@@ -41,6 +41,16 @@ namespace ShadowClone.Presentation
         private AudioClip buttonDoorAmbienceClip;
         private AudioClip hazardTimingAmbienceClip;
         private AudioClip finalAmbienceClip;
+        private float beatClockStartTime;
+        private float beatInterval = 0.625f;
+        private float beatPhase01;
+        private float beatPulse01;
+        private int currentBeatIndex = -1;
+
+        public static float CurrentBpm => instance != null ? instance.GetCurrentBpm() : 96f;
+        public static float BeatPhase01 => instance != null ? instance.beatPhase01 : 0f;
+        public static float BeatPulse01 => instance != null ? instance.beatPulse01 : 0f;
+        public static int CurrentBeatIndex => instance != null ? instance.currentBeatIndex : -1;
 
         private PlayerController playerController;
         private RecordingController recordingController;
@@ -111,6 +121,11 @@ namespace ShadowClone.Presentation
             HandleSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
         }
 
+        private void Update()
+        {
+            UpdateBeatClock();
+        }
+
         private void OnDestroy()
         {
             if (instance == this)
@@ -128,11 +143,13 @@ namespace ShadowClone.Presentation
 
             if (scene.name == SceneRegistry.MainMenu)
             {
+                ConfigureBeatClock(88f);
                 PlayAmbience(menuAmbienceClip, 0.32f);
                 return;
             }
 
-            PlayAmbience(GetLevelAmbience(scene.name), 0.3f);
+            ConfigureBeatClock(GetLevelBpm(scene.name));
+            PlayAmbience(GetLevelAmbience(scene.name), 0.75f);
             PlayLevelStart();
 
             playerController = FindObjectOfType<PlayerController>();
@@ -338,10 +355,10 @@ namespace ShadowClone.Presentation
             restartClip = BuildSweepClip("restart", WaveShape.Square, 300f, 0.15f, 0.14f, 620f, 0.01f, 0.01f);
             levelStartClip = BuildChordClip("levelStart", 0.22f, 0.11f, new[] { 349.23f, 440f, 523.25f });
             menuAmbienceClip = BuildAmbientLoop("menuAmbience", 5.5f, 95f, 165f, 0.035f, 0.02f);
-            tutorialAmbienceClip = BuildAmbientLoop("tutorialAmbience", 6.0f, 78f, 128f, 0.028f, 0.01f);
-            buttonDoorAmbienceClip = BuildAmbientLoop("buttonDoorAmbience", 6.2f, 70f, 110f, 0.032f, 0.012f);
-            hazardTimingAmbienceClip = BuildAmbientLoop("hazardTimingAmbience", 6.4f, 62f, 98f, 0.035f, 0.016f);
-            finalAmbienceClip = BuildAmbientLoop("finalAmbience", 6.8f, 58f, 92f, 0.038f, 0.018f);
+            tutorialAmbienceClip = BuildRhythmLoop("level01_96bpm", 96f, 0.16f, 16, 0);
+            buttonDoorAmbienceClip = BuildRhythmLoop("level02_108bpm", 108f, 0.17f, 16, 1);
+            hazardTimingAmbienceClip = BuildRhythmLoop("level03_124bpm", 124f, 0.18f, 16, 2);
+            finalAmbienceClip = BuildRhythmLoop("level04_136bpm", 136f, 0.19f, 16, 3);
         }
 
         private AudioClip BuildSweepClip(string clipName, WaveShape shape, float startFrequency, float duration, float amplitude, float endFrequency, float vibratoAmount, float noiseMix)
@@ -472,6 +489,48 @@ namespace ShadowClone.Presentation
             return CreateClip(clipName, samples, sampleRate);
         }
 
+        private AudioClip BuildRhythmLoop(string clipName, float bpm, float amplitude, int beatCount, int intensity)
+        {
+            const int sampleRate = 44100;
+            float secondsPerBeat = 60f / bpm;
+            int sampleCount = Mathf.CeilToInt(sampleRate * secondsPerBeat * beatCount);
+            float[] samples = new float[sampleCount];
+            float phaseBass = 0f;
+            float phasePadA = 0f;
+            float phasePadB = 0f;
+            Random.State previousRandomState = Random.state;
+            Random.InitState(clipName.GetHashCode());
+
+            for (int i = 0; i < sampleCount; i++)
+            {
+                float time = (float)i / sampleRate;
+                float beatPosition = time / secondsPerBeat;
+                int beat = Mathf.FloorToInt(beatPosition);
+                float beatPhase = beatPosition - beat;
+                float eighthPhase = (beatPosition * 2f) - Mathf.Floor(beatPosition * 2f);
+
+                float kick = Mathf.Exp(-beatPhase * Mathf.Lerp(16f, 22f, intensity / 3f)) * Mathf.Sin(2f * Mathf.PI * Mathf.Lerp(52f, 72f, 1f - beatPhase) * time);
+                float hat = Mathf.Exp(-eighthPhase * 32f) * (Random.value * 2f - 1f) * (0.18f + intensity * 0.035f);
+                float accent = beat % 4 == 0 ? 1f : 0.45f;
+
+                float bassFrequency = 82.41f * (1f + ((beat + intensity) % 4 == 2 ? 0.5f : 0f));
+                phaseBass += 2f * Mathf.PI * bassFrequency / sampleRate;
+                phasePadA += 2f * Mathf.PI * Mathf.Lerp(138f, 164f, intensity / 3f) / sampleRate;
+                phasePadB += 2f * Mathf.PI * Mathf.Lerp(207f, 246f, intensity / 3f) / sampleRate;
+
+                float bassGate = beatPhase < 0.48f ? 1f - beatPhase * 1.55f : 0f;
+                float bass = EvaluateWave(WaveShape.Triangle, phaseBass) * bassGate * 0.42f;
+                float pad = (Mathf.Sin(phasePadA) * 0.55f + Mathf.Sin(phasePadB) * 0.45f) * 0.16f;
+                float syncopation = ((beat + intensity) % 8 == 6 && beatPhase < 0.5f) ? Mathf.Sin(phaseBass * 2f) * 0.14f : 0f;
+                float envelope = 0.85f + Mathf.Sin((time / (secondsPerBeat * beatCount)) * Mathf.PI * 2f) * 0.05f;
+
+                samples[i] = Mathf.Clamp((kick * 0.34f * accent + hat + bass + pad + syncopation) * amplitude * envelope, -1f, 1f);
+            }
+
+            Random.state = previousRandomState;
+            return CreateClip(clipName, samples, sampleRate);
+        }
+
         private AudioClip GetLevelAmbience(string sceneName)
         {
             switch (sceneName)
@@ -486,6 +545,45 @@ namespace ShadowClone.Presentation
                     return finalAmbienceClip;
                 default:
                     return tutorialAmbienceClip;
+            }
+        }
+
+        private void ConfigureBeatClock(float bpm)
+        {
+            beatInterval = Mathf.Max(0.001f, 60f / bpm);
+            beatClockStartTime = Time.unscaledTime;
+            currentBeatIndex = -1;
+            UpdateBeatClock();
+        }
+
+        private void UpdateBeatClock()
+        {
+            float elapsed = Mathf.Max(0f, Time.unscaledTime - beatClockStartTime);
+            float beatPosition = elapsed / Mathf.Max(0.001f, beatInterval);
+            currentBeatIndex = Mathf.FloorToInt(beatPosition);
+            beatPhase01 = beatPosition - currentBeatIndex;
+            beatPulse01 = Mathf.Pow(1f - beatPhase01, 3.2f);
+        }
+
+        private float GetCurrentBpm()
+        {
+            return 60f / Mathf.Max(0.001f, beatInterval);
+        }
+
+        private static float GetLevelBpm(string sceneName)
+        {
+            switch (sceneName)
+            {
+                case SceneRegistry.Tutorial:
+                    return 96f;
+                case SceneRegistry.ButtonDoor:
+                    return 108f;
+                case SceneRegistry.HazardTiming:
+                    return 124f;
+                case SceneRegistry.Final:
+                    return 136f;
+                default:
+                    return 96f;
             }
         }
 

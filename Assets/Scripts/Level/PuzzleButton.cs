@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using ShadowClone.Clone;
 using ShadowClone.Gameplay;
+using ShadowClone.Presentation;
 using UnityEngine;
 
 namespace ShadowClone.Level
@@ -49,12 +50,14 @@ namespace ShadowClone.Level
 
             if (IsPressed)
             {
-                float pulse = 1f + Mathf.Sin(Time.time * activePulseSpeed) * activePulseAmplitude;
+                float localPulse = (Mathf.Sin(Time.time * activePulseSpeed) + 1f) * 0.5f;
+                float beatPulse = Mathf.Clamp01(PresentationFeedbackBootstrap.BeatPulse01 + localPulse * 0.08f);
+                float pulse = 1f + beatPulse * activePulseAmplitude * 1.7f;
                 targetRenderer.color = activeColor * pulse;
                 targetRenderer.color = new Color(targetRenderer.color.r, targetRenderer.color.g, targetRenderer.color.b, 1f);
                 if (glowRenderer != null)
                 {
-                    glowRenderer.color = new Color(activeColor.r, activeColor.g, activeColor.b, 0.22f + ((pulse - 1f) * 0.4f));
+                    glowRenderer.color = new Color(activeColor.r, activeColor.g, activeColor.b, 0.2f + beatPulse * 0.24f);
                 }
             }
             else
@@ -62,7 +65,9 @@ namespace ShadowClone.Level
                 targetRenderer.color = Color.Lerp(targetRenderer.color, inactiveColor, 10f * Time.deltaTime);
                 if (glowRenderer != null)
                 {
-                    glowRenderer.color = Color.Lerp(glowRenderer.color, new Color(inactiveColor.r, inactiveColor.g, inactiveColor.b, 0.08f), 10f * Time.deltaTime);
+                    float beatPulse = PresentationFeedbackBootstrap.BeatPulse01;
+                    Color idleGlow = new Color(inactiveColor.r, inactiveColor.g, inactiveColor.b, 0.06f + beatPulse * 0.035f);
+                    glowRenderer.color = Color.Lerp(glowRenderer.color, idleGlow, 10f * Time.deltaTime);
                 }
             }
         }

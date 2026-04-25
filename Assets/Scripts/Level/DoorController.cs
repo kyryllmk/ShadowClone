@@ -1,3 +1,4 @@
+using ShadowClone.Presentation;
 using UnityEngine;
 
 namespace ShadowClone.Level
@@ -36,12 +37,14 @@ namespace ShadowClone.Level
             if (targetRenderer != null)
             {
                 Color targetColor = IsOpen ? openColor : closedColor;
-                targetRenderer.color = Color.Lerp(targetRenderer.color, targetColor, transitionSpeed * Time.deltaTime);
+                float beatLift = IsOpen ? 0.04f : PresentationFeedbackBootstrap.BeatPulse01 * 0.08f;
+                targetRenderer.color = Color.Lerp(targetRenderer.color, Color.Lerp(targetColor, Color.white, beatLift), transitionSpeed * Time.deltaTime);
             }
 
             if (glowRenderer != null)
             {
-                Color glowColor = IsOpen ? new Color(0.56f, 1f, 1f, 0.18f) : new Color(0.18f, 0.9f, 1f, 0.28f);
+                float beatPulse = PresentationFeedbackBootstrap.BeatPulse01;
+                Color glowColor = IsOpen ? new Color(0.56f, 1f, 1f, 0.16f + beatPulse * 0.06f) : new Color(0.18f, 0.9f, 1f, 0.24f + beatPulse * 0.12f);
                 glowRenderer.color = Color.Lerp(glowRenderer.color, glowColor, transitionSpeed * Time.deltaTime);
             }
         }

@@ -157,8 +157,9 @@ namespace ShadowClone.Presentation
                     continue;
                 }
 
-                float pulse = 0.5f + (Mathf.Sin(time * element.Speed + element.PhaseOffset) * 0.5f);
-                element.Renderer.color = Color.Lerp(element.BaseColor, element.TargetColor, pulse * element.Intensity);
+                float localPulse = 0.5f + (Mathf.Sin(time * element.Speed + element.PhaseOffset) * 0.5f);
+                float beatPulse = Mathf.Clamp01(PresentationFeedbackBootstrap.BeatPulse01 + localPulse * 0.12f);
+                element.Renderer.color = Color.Lerp(element.BaseColor, element.TargetColor, beatPulse * element.Intensity);
             }
         }
 

@@ -1,3 +1,4 @@
+using ShadowClone.Presentation;
 using TMPro;
 using UnityEngine;
 
@@ -6,6 +7,32 @@ namespace ShadowClone.UI
     public class MechanicHudController : MonoBehaviour
     {
         [SerializeField] private TMP_Text statusLabel;
+        [SerializeField] private float beatPulseScale = 0.035f;
+        [SerializeField] private float beatPulseAlpha = 0.16f;
+
+        private Vector3 baseScale = Vector3.one;
+
+        private void Awake()
+        {
+            if (statusLabel != null)
+            {
+                baseScale = statusLabel.rectTransform.localScale;
+            }
+        }
+
+        private void Update()
+        {
+            if (statusLabel == null || string.IsNullOrEmpty(statusLabel.text))
+            {
+                return;
+            }
+
+            float pulse = PresentationFeedbackBootstrap.BeatPulse01;
+            statusLabel.rectTransform.localScale = baseScale * (1f + pulse * beatPulseScale);
+            Color color = statusLabel.color;
+            color.a = Mathf.Clamp01(0.84f + pulse * beatPulseAlpha);
+            statusLabel.color = color;
+        }
 
         public void ShowReady(float duration)
         {

@@ -14,6 +14,16 @@ namespace ShadowClone.UI
     public class GameplayUiBootstrap : MonoBehaviour
     {
         private const string BootstrapObjectName = "GameplayUiBootstrap";
+        private const float DeathEffectDuration = 0.18f;
+        private const float SuccessEffectDuration = 0.28f;
+        private static readonly Vector2[] DeathShardBasePositions =
+        {
+            new Vector2(-180f, 54f),
+            new Vector2(152f, -28f),
+            new Vector2(-24f, 122f),
+            new Vector2(84f, -118f)
+        };
+
         private static GameplayUiBootstrap instance;
 
         private RoomResetManager roomResetManager;
@@ -27,7 +37,10 @@ namespace ShadowClone.UI
         private GameObject pausePanel;
         private GameObject completionPanel;
         private GameObject deathOverlay;
-        private TextMeshProUGUI deathLabel;
+        private Image deathFlashImage;
+        private Image deathBurstImage;
+        private Image[] deathShardImages = System.Array.Empty<Image>();
+        private Image successFlashImage;
         private TextMeshProUGUI completionTitle;
         private TextMeshProUGUI completionBody;
         private Button nextLevelButton;
@@ -35,6 +48,7 @@ namespace ShadowClone.UI
         private bool isPaused;
         private bool isCompleted;
         private float deathOverlayTimer;
+        private float successOverlayTimer;
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void BootstrapForGameplayScene()
         {
@@ -68,10 +82,22 @@ namespace ShadowClone.UI
             if (deathOverlayTimer > 0f)
             {
                 deathOverlayTimer -= Time.unscaledDeltaTime;
+                UpdateDeathEffect();
+
                 if (deathOverlayTimer <= 0f && deathOverlay != null)
                 {
                     deathOverlay.SetActive(false);
                 }
+            }
+
+            if (successOverlayTimer > 0f)
+            {
+                successOverlayTimer -= Time.unscaledDeltaTime;
+                UpdateSuccessEffect();
+            }
+            else
+            {
+                UpdateRhythmUiPulse();
             }
 
             if (Input.GetKeyDown(KeyCode.Escape) && !isCompleted)
@@ -102,6 +128,7 @@ namespace ShadowClone.UI
             isPaused = false;
             isCompleted = false;
             deathOverlayTimer = 0f;
+            successOverlayTimer = 0f;
             Time.timeScale = 1f;
 
             if (scene.name == SceneRegistry.MainMenu || scene.name == SceneRegistry.LevelSelect)
@@ -129,6 +156,11 @@ namespace ShadowClone.UI
             if (deathOverlay != null)
             {
                 deathOverlay.SetActive(false);
+            }
+
+            if (successFlashImage != null)
+            {
+                successFlashImage.gameObject.SetActive(false);
             }
 
             RefreshControlsPrompt();
@@ -182,19 +214,30 @@ namespace ShadowClone.UI
             deathOverlay = new GameObject("DeathOverlay");
             deathOverlay.transform.SetParent(overlayCanvas.transform, false);
             RectTransform deathRect = deathOverlay.AddComponent<RectTransform>();
-            deathRect.anchorMin = new Vector2(0.5f, 0.5f);
-            deathRect.anchorMax = new Vector2(0.5f, 0.5f);
+            deathRect.anchorMin = Vector2.zero;
+            deathRect.anchorMax = Vector2.one;
             deathRect.pivot = new Vector2(0.5f, 0.5f);
-            deathRect.sizeDelta = new Vector2(420f, 120f);
-            deathLabel = CreateText("DeathLabel", deathOverlay.transform, 52, TextAlignmentOptions.Center, "FAILED", TypographyRole.Title);
-            RectTransform deathLabelRect = deathLabel.rectTransform;
-            deathLabelRect.anchorMin = new Vector2(0.5f, 0.5f);
-            deathLabelRect.anchorMax = new Vector2(0.5f, 0.5f);
-            deathLabelRect.pivot = new Vector2(0.5f, 0.5f);
-            deathLabelRect.anchoredPosition = Vector2.zero;
-            deathLabelRect.sizeDelta = new Vector2(420f, 80f);
-            deathLabel.color = new Color(1f, 0.42f, 0.42f, 1f);
+            deathRect.offsetMin = Vector2.zero;
+            deathRect.offsetMax = Vector2.zero;
+
+            deathFlashImage = CreateOverlayImage("DeathWhiteFlash", deathOverlay.transform, Color.white);
+            deathBurstImage = CreateOverlayImage("DeathRedBurst", deathOverlay.transform, new Color(1f, 0.05f, 0.02f, 0.85f));
+            RectTransform burstRect = deathBurstImage.rectTransform;
+            burstRect.anchorMin = new Vector2(0.5f, 0.5f);
+            burstRect.anchorMax = new Vector2(0.5f, 0.5f);
+            burstRect.pivot = new Vector2(0.5f, 0.5f);
+            burstRect.sizeDelta = new Vector2(340f, 340f);
+            deathShardImages = new[]
+            {
+                CreateDeathShard("DeathShardA", DeathShardBasePositions[0], new Vector2(420f, 16f), 14f),
+                CreateDeathShard("DeathShardB", DeathShardBasePositions[1], new Vector2(360f, 12f), -10f),
+                CreateDeathShard("DeathShardC", DeathShardBasePositions[2], new Vector2(300f, 10f), -23f),
+                CreateDeathShard("DeathShardD", DeathShardBasePositions[3], new Vector2(500f, 14f), 7f)
+            };
             deathOverlay.SetActive(false);
+
+            successFlashImage = CreateOverlayImage("SuccessFlash", overlayCanvas.transform, new Color(0.64f, 1f, 0.86f, 0f));
+            successFlashImage.gameObject.SetActive(false);
         }
 
         private void EnsureOverlayBuilt()
@@ -205,7 +248,11 @@ namespace ShadowClone.UI
                 pausePanel == null ||
                 completionPanel == null ||
                 deathOverlay == null ||
-                deathLabel == null ||
+                deathFlashImage == null ||
+                deathBurstImage == null ||
+                deathShardImages == null ||
+                deathShardImages.Length == 0 ||
+                successFlashImage == null ||
                 completionTitle == null ||
                 completionBody == null ||
                 nextLevelButton == null;
@@ -238,6 +285,38 @@ namespace ShadowClone.UI
 
             canvasObject.AddComponent<GraphicRaycaster>();
             return canvas;
+        }
+
+        private Image CreateOverlayImage(string name, Transform parent, Color color)
+        {
+            GameObject imageObject = new GameObject(name);
+            imageObject.transform.SetParent(parent, false);
+
+            Image image = imageObject.AddComponent<Image>();
+            image.color = color;
+            image.raycastTarget = false;
+
+            RectTransform rect = image.rectTransform;
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+
+            return image;
+        }
+
+        private Image CreateDeathShard(string name, Vector2 anchoredPosition, Vector2 size, float rotation)
+        {
+            Image image = CreateOverlayImage(name, deathOverlay.transform, new Color(1f, 0.12f, 0.08f, 0.55f));
+            RectTransform rect = image.rectTransform;
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = anchoredPosition;
+            rect.sizeDelta = size;
+            rect.localRotation = Quaternion.Euler(0f, 0f, rotation);
+            return image;
         }
 
         private void RefreshControlsPrompt()
@@ -315,6 +394,9 @@ namespace ShadowClone.UI
 
             bool hasNextLevel = SceneRegistry.TryGetNextCampaignScene(SceneManager.GetActiveScene().name, out string nextSceneName);
             completionPanel.SetActive(true);
+            completionPanel.transform.localScale = Vector3.one * 1.08f;
+            successOverlayTimer = SuccessEffectDuration;
+            UpdateSuccessEffect();
 
             if (hasNextLevel)
             {
@@ -483,7 +565,80 @@ namespace ShadowClone.UI
             }
 
             deathOverlay.SetActive(true);
-            deathOverlayTimer = 0.3f;
+            deathOverlayTimer = DeathEffectDuration;
+            UpdateDeathEffect();
+        }
+
+        private void UpdateDeathEffect()
+        {
+            if (deathFlashImage == null || deathBurstImage == null)
+            {
+                return;
+            }
+
+            float progress = 1f - Mathf.Clamp01(deathOverlayTimer / DeathEffectDuration);
+            float flashAlpha = Mathf.Lerp(0.72f, 0f, progress);
+            float burstAlpha = Mathf.Lerp(0.55f, 0f, progress);
+
+            deathFlashImage.color = new Color(1f, 1f, 1f, flashAlpha);
+            deathBurstImage.color = new Color(1f, 0.04f, 0.02f, burstAlpha);
+            deathBurstImage.rectTransform.localScale = Vector3.one * Mathf.Lerp(0.45f, 2.6f, progress);
+
+            if (deathShardImages == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < deathShardImages.Length; i++)
+            {
+                Image shard = deathShardImages[i];
+                if (shard == null)
+                {
+                    continue;
+                }
+
+                float direction = i % 2 == 0 ? -1f : 1f;
+                float alpha = Mathf.Lerp(0.62f, 0f, progress);
+                shard.color = new Color(1f, 0.1f, 0.06f, alpha);
+                shard.rectTransform.anchoredPosition = DeathShardBasePositions[i] + new Vector2(direction * 22f, (i - 1.5f) * 6f) * progress;
+                shard.rectTransform.localScale = new Vector3(Mathf.Lerp(0.72f, 1.18f, progress), 1f, 1f);
+            }
+        }
+
+        private void UpdateSuccessEffect()
+        {
+            float progress = 1f - Mathf.Clamp01(successOverlayTimer / SuccessEffectDuration);
+
+            if (successFlashImage != null)
+            {
+                successFlashImage.gameObject.SetActive(successOverlayTimer > 0f);
+                float alpha = Mathf.Lerp(0.48f, 0f, progress);
+                successFlashImage.color = new Color(0.62f, 1f, 0.86f, alpha);
+            }
+
+            if (completionPanel != null && completionPanel.activeSelf)
+            {
+                float pulse = Mathf.Sin(progress * Mathf.PI) * 0.08f;
+                completionPanel.transform.localScale = Vector3.one * (1f + pulse);
+            }
+        }
+
+        private void UpdateRhythmUiPulse()
+        {
+            float beatPulse = PresentationFeedbackBootstrap.BeatPulse01;
+
+            if (objectiveLabel != null && overlayCanvas != null && overlayCanvas.enabled)
+            {
+                objectiveLabel.rectTransform.localScale = Vector3.one * (1f + beatPulse * 0.018f);
+                Color color = objectiveLabel.color;
+                color.a = Mathf.Clamp01(0.82f + beatPulse * 0.16f);
+                objectiveLabel.color = color;
+            }
+
+            if (completionPanel != null && completionPanel.activeSelf)
+            {
+                completionPanel.transform.localScale = Vector3.one * (1f + beatPulse * 0.026f);
+            }
         }
 
         private enum TypographyRole
