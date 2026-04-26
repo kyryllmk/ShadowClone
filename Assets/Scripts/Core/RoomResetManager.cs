@@ -14,8 +14,13 @@ namespace ShadowClone.Core
         [SerializeField] private DoorController[] resettableDoors;
         [SerializeField] private KeyCode resetKey = KeyCode.Tab;
         [SerializeField] private KeyCode alternateResetKey = KeyCode.Backspace;
+        [SerializeField] private bool enableFallResetFallback = true;
+        [SerializeField] private float fallResetY = -7f;
+        [SerializeField] private float resetCooldown = 0.05f;
 
         private Vector3 initialPlayerScale;
+        private float resetCooldownTimer;
+        public event System.Action<string> ResetCompleted;
 
         private void Awake()
         {
@@ -27,14 +32,27 @@ namespace ShadowClone.Core
 
         private void Update()
         {
+            if (resetCooldownTimer > 0f)
+            {
+                resetCooldownTimer -= Time.deltaTime;
+            }
+
             if (Input.GetKeyDown(resetKey) || Input.GetKeyDown(alternateResetKey))
             {
                 RequestReset("Manual reset");
+                return;
+            }
+
+            if (enableFallResetFallback && playerController != null && resetCooldownTimer <= 0f && playerController.transform.position.y <= fallResetY)
+            {
+                RequestReset("Fall reset");
             }
         }
 
         public void RequestReset(string reason)
         {
+            resetCooldownTimer = resetCooldown;
+
             if (cloneMechanicController != null)
             {
                 cloneMechanicController.ResetMechanicState(reason);
@@ -66,6 +84,8 @@ namespace ShadowClone.Core
             {
                 playerController.ResetToSpawn(spawnPoint.transform.position, initialPlayerScale);
             }
+
+            ResetCompleted?.Invoke(reason);
         }
     }
 }

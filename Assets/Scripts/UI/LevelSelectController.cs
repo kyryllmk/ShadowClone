@@ -314,9 +314,8 @@ namespace ShadowClone.UI
             if (binding.metaLabel != null)
             {
                 int stars = LevelProgressManager.GetStars(levelNumber);
-                int bestScore = LevelProgressManager.GetBestScore(levelNumber);
                 binding.metaLabel.text = unlocked
-                    ? $"STARS {stars}/3    BEST {bestScore}"
+                    ? $"STARS {stars}/3    BEST {stars}"
                     : "COMPLETE PREVIOUS LEVEL";
                 TypographyTheme.ApplyHud(binding.metaLabel);
                 binding.metaLabel.color = unlocked ? new Color(0.72f, 0.88f, 0.98f, 1f) : lockedTextColor;

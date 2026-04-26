@@ -54,6 +54,11 @@ namespace ShadowClone.UI
             SetText("REPLAYING");
         }
 
+        public void ShowRecorded()
+        {
+            SetText("RECORDED");
+        }
+
         public void ShowBlocked(string message)
         {
             SetText(message);

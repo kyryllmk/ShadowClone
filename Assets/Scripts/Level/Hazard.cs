@@ -24,6 +24,12 @@ namespace ShadowClone.Level
         {
             triggerCollider = GetComponent<Collider2D>();
             triggerCollider.isTrigger = true;
+
+            if (roomResetManager == null)
+            {
+                roomResetManager = FindObjectOfType<RoomResetManager>();
+            }
+
             CreateSilhouetteRenderer();
         }
 
@@ -55,12 +61,38 @@ namespace ShadowClone.Level
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (roomResetManager == null)
+            TryReset(other);
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            TryReset(collision.collider);
+        }
+
+        public void ConfigureReset(RoomResetManager manager, string reason)
+        {
+            roomResetManager = manager;
+            resetReason = reason;
+
+            if (triggerCollider == null)
             {
-                return;
+                triggerCollider = GetComponent<Collider2D>();
             }
 
-            if (other.GetComponentInParent<PlayerController>() == null)
+            if (triggerCollider != null)
+            {
+                triggerCollider.isTrigger = true;
+            }
+        }
+
+        private void TryReset(Collider2D other)
+        {
+            if (roomResetManager == null)
+            {
+                roomResetManager = FindObjectOfType<RoomResetManager>();
+            }
+
+            if (roomResetManager == null || other == null || other.GetComponentInParent<PlayerController>() == null)
             {
                 return;
             }

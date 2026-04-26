@@ -20,6 +20,11 @@ namespace ShadowClone.Clone
             {
                 recordingController.RecordingFinished += HandleRecordingFinished;
             }
+
+            if (cloneReplayController != null)
+            {
+                cloneReplayController.ReplayFinished += HandleReplayFinished;
+            }
         }
 
         private void OnDestroy()
@@ -27,6 +32,11 @@ namespace ShadowClone.Clone
             if (recordingController != null)
             {
                 recordingController.RecordingFinished -= HandleRecordingFinished;
+            }
+
+            if (cloneReplayController != null)
+            {
+                cloneReplayController.ReplayFinished -= HandleReplayFinished;
             }
         }
 
@@ -107,6 +117,16 @@ namespace ShadowClone.Clone
 
             bool capturedClip = clip.FrameCount > 1;
             mechanicHudController.ShowRecordingFinished(capturedClip, clip.Duration);
+        }
+
+        private void HandleReplayFinished()
+        {
+            if (mechanicHudController == null || recordingController == null || !recordingController.HasRecording)
+            {
+                return;
+            }
+
+            mechanicHudController.ShowRecorded();
         }
 
         public void ResetMechanicState(string reason)

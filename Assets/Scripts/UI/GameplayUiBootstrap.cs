@@ -31,9 +31,13 @@ namespace ShadowClone.UI
         private PlayerController playerController;
         private GoalZone goalZone;
         private Hazard[] hazards;
+        private StarCollectionManager starCollectionManager;
 
         private Canvas overlayCanvas;
         private TextMeshProUGUI objectiveLabel;
+        private TextMeshProUGUI starLabel;
+        private GameObject onboardingPanel;
+        private TextMeshProUGUI onboardingLabel;
         private GameObject pausePanel;
         private GameObject completionPanel;
         private GameObject deathOverlay;
@@ -49,6 +53,14 @@ namespace ShadowClone.UI
         private bool isCompleted;
         private float deathOverlayTimer;
         private float successOverlayTimer;
+        private float onboardingTimer;
+        private float starBindRetryTimer;
+
+        public static void ShowOnboardingPrompt(string message, float duration = 3.2f)
+        {
+            instance?.ShowOnboarding(message, duration);
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void BootstrapForGameplayScene()
         {
@@ -100,6 +112,14 @@ namespace ShadowClone.UI
                 UpdateRhythmUiPulse();
             }
 
+            if (onboardingTimer > 0f)
+            {
+                onboardingTimer -= Time.unscaledDeltaTime;
+                UpdateOnboardingPrompt();
+            }
+
+            TryBindStarCollectionManager();
+
             if (Input.GetKeyDown(KeyCode.Escape) && !isCompleted)
             {
                 SetPaused(!isPaused);
@@ -108,8 +128,10 @@ namespace ShadowClone.UI
 
         private void OnDestroy()
         {
+            ReleaseResetSubscription();
             ReleaseGoalSubscription();
             ReleaseHazardSubscriptions();
+            ReleaseStarSubscription();
             if (instance == this)
             {
                 SceneManager.sceneLoaded -= HandleSceneLoaded;
@@ -122,13 +144,17 @@ namespace ShadowClone.UI
         private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             EnsureOverlayBuilt();
+            ReleaseResetSubscription();
             ReleaseGoalSubscription();
             ReleaseHazardSubscriptions();
+            ReleaseStarSubscription();
 
             isPaused = false;
             isCompleted = false;
             deathOverlayTimer = 0f;
             successOverlayTimer = 0f;
+            onboardingTimer = 0f;
+            starBindRetryTimer = 0f;
             Time.timeScale = 1f;
 
             if (scene.name == SceneRegistry.MainMenu || scene.name == SceneRegistry.LevelSelect)
@@ -163,7 +189,13 @@ namespace ShadowClone.UI
                 successFlashImage.gameObject.SetActive(false);
             }
 
+            if (onboardingPanel != null)
+            {
+                onboardingPanel.SetActive(false);
+            }
+
             RefreshControlsPrompt();
+            RefreshStarCounter(0, 3);
         }
 
         private void EnsureEventSystem()
@@ -190,6 +222,32 @@ namespace ShadowClone.UI
             objectiveRect.sizeDelta = new Vector2(340f, 34f);
             TypographyTheme.ApplyHud(objectiveLabel);
             objectiveLabel.enableWordWrapping = false;
+
+            starLabel = CreateText("StarCounterLabel", overlayCanvas.transform, 20, TextAlignmentOptions.TopLeft, "STAR 0/3", TypographyRole.Hud);
+            RectTransform starRect = starLabel.rectTransform;
+            starRect.anchorMin = new Vector2(0f, 1f);
+            starRect.anchorMax = new Vector2(0f, 1f);
+            starRect.pivot = new Vector2(0f, 1f);
+            starRect.anchoredPosition = new Vector2(20f, -54f);
+            starRect.sizeDelta = new Vector2(220f, 30f);
+            TypographyTheme.ApplyHud(starLabel);
+            starLabel.enableWordWrapping = false;
+
+            onboardingPanel = CreatePanel("OnboardingPanel", overlayCanvas.transform, new Color(0.02f, 0.06f, 0.09f, 0.7f));
+            RectTransform onboardingRect = onboardingPanel.GetComponent<RectTransform>();
+            onboardingRect.anchorMin = new Vector2(0.5f, 1f);
+            onboardingRect.anchorMax = new Vector2(0.5f, 1f);
+            onboardingRect.pivot = new Vector2(0.5f, 1f);
+            onboardingRect.anchoredPosition = new Vector2(0f, -80f);
+            onboardingRect.sizeDelta = new Vector2(760f, 72f);
+            onboardingLabel = CreateText("OnboardingLabel", onboardingPanel.transform, 28, TextAlignmentOptions.Center, string.Empty, TypographyRole.Hud);
+            RectTransform onboardingLabelRect = onboardingLabel.rectTransform;
+            onboardingLabelRect.anchorMin = Vector2.zero;
+            onboardingLabelRect.anchorMax = Vector2.one;
+            onboardingLabelRect.pivot = new Vector2(0.5f, 0.5f);
+            onboardingLabelRect.anchoredPosition = Vector2.zero;
+            onboardingLabelRect.sizeDelta = Vector2.zero;
+            onboardingPanel.SetActive(false);
 
             pausePanel = CreatePanel("PausePanel", overlayCanvas.transform, new Color(0.05f, 0.08f, 0.12f, 0.92f));
             pausePanel.SetActive(false);
@@ -245,6 +303,9 @@ namespace ShadowClone.UI
             bool needsRebuild =
                 overlayCanvas == null ||
                 objectiveLabel == null ||
+                starLabel == null ||
+                onboardingPanel == null ||
+                onboardingLabel == null ||
                 pausePanel == null ||
                 completionPanel == null ||
                 deathOverlay == null ||
@@ -394,20 +455,20 @@ namespace ShadowClone.UI
 
             bool hasNextLevel = SceneRegistry.TryGetNextCampaignScene(SceneManager.GetActiveScene().name, out string nextSceneName);
             completionPanel.SetActive(true);
-            completionPanel.transform.localScale = Vector3.one * 1.08f;
-            successOverlayTimer = SuccessEffectDuration;
-            UpdateSuccessEffect();
+                completionPanel.transform.localScale = Vector3.one * 1.08f;
+                successOverlayTimer = SuccessEffectDuration;
+                UpdateSuccessEffect();
 
             if (hasNextLevel)
             {
                 completionTitle.text = "COMPLETE";
-                completionBody.text = "ROOM CLEAR";
+                completionBody.text = GetCompletionBodyText("ROOM CLEAR");
                 nextLevelButton.gameObject.SetActive(true);
             }
             else
             {
                 completionTitle.text = "PROTOTYPE COMPLETE";
-                completionBody.text = "SIMULATION CLEAR";
+                completionBody.text = GetCompletionBodyText("SIMULATION CLEAR");
                 nextLevelButton.gameObject.SetActive(false);
             }
         }
@@ -512,10 +573,16 @@ namespace ShadowClone.UI
             playerController = FindObjectOfType<PlayerController>();
             goalZone = FindObjectOfType<GoalZone>();
             hazards = FindObjectsOfType<Hazard>();
+            TryBindStarCollectionManager(force: true);
 
             if (goalZone != null)
             {
                 goalZone.Completed += HandleLevelCompleted;
+            }
+
+            if (roomResetManager != null)
+            {
+                roomResetManager.ResetCompleted += HandleResetCompleted;
             }
 
             if (hazards != null)
@@ -557,6 +624,62 @@ namespace ShadowClone.UI
             hazards = null;
         }
 
+        private void ReleaseResetSubscription()
+        {
+            if (roomResetManager != null)
+            {
+                roomResetManager.ResetCompleted -= HandleResetCompleted;
+                roomResetManager = null;
+            }
+        }
+
+        private void TryBindStarCollectionManager(bool force = false)
+        {
+            if (starCollectionManager != null || !force && starBindRetryTimer > 0f)
+            {
+                if (!force)
+                {
+                    starBindRetryTimer -= Time.unscaledDeltaTime;
+                }
+                return;
+            }
+
+            StarCollectionManager manager = StarCollectionManager.Active;
+            if (manager == null)
+            {
+                starBindRetryTimer = 0.2f;
+                return;
+            }
+
+            starCollectionManager = manager;
+            starCollectionManager.StarsChanged += HandleStarsChanged;
+            RefreshStarCounter(starCollectionManager.CollectedThisRun, starCollectionManager.TotalStars);
+        }
+
+        private void ReleaseStarSubscription()
+        {
+            if (starCollectionManager != null)
+            {
+                starCollectionManager.StarsChanged -= HandleStarsChanged;
+                starCollectionManager = null;
+            }
+        }
+
+        private void HandleStarsChanged(int collected, int total)
+        {
+            RefreshStarCounter(collected, total);
+        }
+
+        private void RefreshStarCounter(int collected, int total)
+        {
+            if (starLabel == null)
+            {
+                return;
+            }
+
+            starLabel.text = $"STARS {Mathf.Clamp(collected, 0, total)}/{Mathf.Max(1, total)}";
+        }
+
         private void HandleHazardTriggered()
         {
             if (deathOverlay == null || isCompleted)
@@ -567,6 +690,16 @@ namespace ShadowClone.UI
             deathOverlay.SetActive(true);
             deathOverlayTimer = DeathEffectDuration;
             UpdateDeathEffect();
+        }
+
+        private void HandleResetCompleted(string reason)
+        {
+            if (reason != "Fall reset" && reason != "Out of bounds")
+            {
+                return;
+            }
+
+            HandleHazardTriggered();
         }
 
         private void UpdateDeathEffect()
@@ -639,6 +772,49 @@ namespace ShadowClone.UI
             {
                 completionPanel.transform.localScale = Vector3.one * (1f + beatPulse * 0.026f);
             }
+        }
+
+        private void ShowOnboarding(string message, float duration)
+        {
+            if (onboardingPanel == null || onboardingLabel == null || string.IsNullOrWhiteSpace(message))
+            {
+                return;
+            }
+
+            onboardingLabel.text = TypographyTheme.NormalizeToken(message);
+            onboardingTimer = Mathf.Max(0.5f, duration);
+            onboardingPanel.SetActive(true);
+            UpdateOnboardingPrompt();
+        }
+
+        private void UpdateOnboardingPrompt()
+        {
+            if (onboardingPanel == null || onboardingLabel == null)
+            {
+                return;
+            }
+
+            if (onboardingTimer <= 0f)
+            {
+                onboardingPanel.SetActive(false);
+                return;
+            }
+
+            float alpha = Mathf.Clamp01(onboardingTimer / 0.35f);
+            Image panelImage = onboardingPanel.GetComponent<Image>();
+            if (panelImage != null)
+            {
+                panelImage.color = new Color(0.02f, 0.06f, 0.09f, 0.7f * alpha);
+            }
+
+            onboardingLabel.color = new Color(1f, 1f, 1f, alpha);
+        }
+
+        private string GetCompletionBodyText(string fallback)
+        {
+            int collected = starCollectionManager != null ? starCollectionManager.CollectedThisRun : 0;
+            int total = starCollectionManager != null ? starCollectionManager.TotalStars : 3;
+            return $"{fallback}\nSTARS {collected}/{total}";
         }
 
         private enum TypographyRole

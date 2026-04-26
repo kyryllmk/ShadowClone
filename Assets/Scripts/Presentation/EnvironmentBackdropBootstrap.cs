@@ -89,13 +89,15 @@ namespace ShadowClone.Presentation
 
         private Camera targetCamera;
         private BackdropMode backdropMode;
+        private Vector3 cameraOriginPosition;
 
         public void Build(string sceneName)
         {
             targetCamera = Camera.main;
             backdropMode = GetMode(sceneName);
+            cameraOriginPosition = targetCamera != null ? targetCamera.transform.position : Vector3.zero;
             transform.localScale = Vector3.one;
-            transform.position = targetCamera != null ? new Vector3(targetCamera.transform.position.x, targetCamera.transform.position.y, 0f) : Vector3.zero;
+            transform.position = new Vector3(cameraOriginPosition.x, cameraOriginPosition.y, 0f);
 
             ScenePalette palette = GetPalette(sceneName);
 
@@ -130,6 +132,7 @@ namespace ShadowClone.Presentation
 
             Vector3 cameraPosition = targetCamera != null ? targetCamera.transform.position : Vector3.zero;
             transform.position = new Vector3(cameraPosition.x, cameraPosition.y, 0f);
+            Vector3 cameraDelta = cameraPosition - cameraOriginPosition;
 
             float time = Time.time;
 
@@ -142,8 +145,8 @@ namespace ShadowClone.Presentation
                 }
 
                 Vector3 localPosition = element.BaseLocalPosition;
-                localPosition.x += cameraPosition.x * element.ParallaxX;
-                localPosition.y += cameraPosition.y * element.ParallaxY;
+                localPosition.x += Mathf.Clamp(cameraDelta.x * element.ParallaxX, -6.5f, 6.5f);
+                localPosition.y += Mathf.Clamp(cameraDelta.y * element.ParallaxY, -1.25f, 1.25f);
                 localPosition.x += Mathf.Sin(time * element.MotionSpeed + element.PhaseOffset) * element.MotionAmplitude;
                 localPosition.y += Mathf.Cos(time * element.MotionSpeed * 0.7f + element.PhaseOffset) * element.MotionAmplitude * 0.35f;
                 element.Transform.localPosition = localPosition;
