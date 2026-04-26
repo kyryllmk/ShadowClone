@@ -86,7 +86,7 @@ namespace ShadowClone.Level
             if (root.name.IndexOf("ResetFloor", System.StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 root.position = new Vector3(centerX, ResetFloorY, root.position.z);
-                root.localScale = new Vector3(width, ResetFloorHeight, Mathf.Approximately(root.localScale.z, 0f) ? 1f : root.localScale.z);
+                root.localScale = Vector3.one;
 
                 BoxCollider2D resetCollider = root.GetComponent<BoxCollider2D>();
                 if (resetCollider == null)
@@ -96,14 +96,12 @@ namespace ShadowClone.Level
 
                 resetCollider.isTrigger = true;
                 resetCollider.offset = Vector2.zero;
-                resetCollider.size = Vector2.one;
+                resetCollider.size = new Vector2(width, ResetFloorHeight);
 
                 SpriteRenderer renderer = root.GetComponent<SpriteRenderer>();
                 if (renderer != null)
                 {
-                    renderer.enabled = true;
-                    renderer.color = new Color(1f, 0.16f, 0.06f, 0.35f);
-                    renderer.sortingOrder = -1;
+                    renderer.enabled = false;
                 }
 
                 Hazard hazard = root.GetComponent<Hazard>();
@@ -121,6 +119,7 @@ namespace ShadowClone.Level
                 }
 
                 resetFloor.Configure(resetManager);
+                return;
             }
 
             for (int i = 0; i < root.childCount; i++)
