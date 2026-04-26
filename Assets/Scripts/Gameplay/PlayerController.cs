@@ -15,6 +15,7 @@ namespace ShadowClone.Gameplay
         private Rigidbody2D body;
         private float moveInput;
         private bool wasGrounded;
+        private bool hasJumpAvailable;
 
         public bool IsGrounded => groundCheck != null && groundCheck.IsGrounded;
         public bool IsMovementLocked { get; private set; }
@@ -31,6 +32,7 @@ namespace ShadowClone.Gameplay
         private void Start()
         {
             wasGrounded = IsGrounded;
+            hasJumpAvailable = wasGrounded;
         }
 
         private void Update()
@@ -42,6 +44,7 @@ namespace ShadowClone.Gameplay
             }
 
             moveInput = Input.GetAxisRaw("Horizontal");
+            bool isGroundedNow = IsGrounded;
 
             if (moveInput > 0.01f)
             {
@@ -52,17 +55,19 @@ namespace ShadowClone.Gameplay
                 FacingDirection = -1f;
             }
 
-            if (Input.GetButtonDown("Jump") && IsGrounded)
-            {
-                body.velocity = new Vector2(body.velocity.x, jumpForce);
-                Jumped?.Invoke();
-                wasGrounded = false;
-            }
-
-            bool isGroundedNow = IsGrounded;
             if (!wasGrounded && isGroundedNow)
             {
+                hasJumpAvailable = true;
                 Landed?.Invoke();
+            }
+
+            if (Input.GetButtonDown("Jump") && hasJumpAvailable && isGroundedNow)
+            {
+                body.velocity = new Vector2(body.velocity.x, jumpForce);
+                hasJumpAvailable = false;
+                Jumped?.Invoke();
+                wasGrounded = false;
+                return;
             }
 
             wasGrounded = isGroundedNow;
@@ -81,6 +86,8 @@ namespace ShadowClone.Gameplay
             body.angularVelocity = 0f;
             FacingDirection = Mathf.Sign(spawnScale.x == 0f ? 1f : spawnScale.x);
             moveInput = 0f;
+            wasGrounded = false;
+            hasJumpAvailable = false;
         }
 
         public void SetMovementLocked(bool isLocked)

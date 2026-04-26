@@ -5,6 +5,8 @@ namespace ShadowClone.Level
 {
     public class DoorController : MonoBehaviour
     {
+        private const float MinimumClosedHeight = 5f;
+
         [SerializeField] private PuzzleButton linkedButton;
         [SerializeField] private Collider2D blockingCollider;
         [SerializeField] private SpriteRenderer targetRenderer;
@@ -22,6 +24,7 @@ namespace ShadowClone.Level
 
         private void Awake()
         {
+            EnforceMinimumClosedHeight();
             baseScale = transform.localScale;
             CreateGlowRenderer();
             ApplyState(startOpen);
@@ -132,6 +135,18 @@ namespace ShadowClone.Level
             glowRenderer.sortingLayerID = targetRenderer.sortingLayerID;
             glowRenderer.sortingOrder = targetRenderer.sortingOrder - 1;
             glowRenderer.color = new Color(0.18f, 0.9f, 1f, 0.28f);
+        }
+
+        private void EnforceMinimumClosedHeight()
+        {
+            Vector3 scale = transform.localScale;
+            if (Mathf.Abs(scale.y) >= MinimumClosedHeight)
+            {
+                return;
+            }
+
+            float direction = Mathf.Sign(Mathf.Approximately(scale.y, 0f) ? 1f : scale.y);
+            transform.localScale = new Vector3(scale.x, MinimumClosedHeight * direction, scale.z);
         }
     }
 }

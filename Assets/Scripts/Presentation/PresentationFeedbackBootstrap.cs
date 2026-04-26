@@ -32,6 +32,7 @@ namespace ShadowClone.Presentation
         private AudioClip doorCloseClip;
         private AudioClip hazardClip;
         private AudioClip completeClip;
+        private AudioClip starClip;
         private AudioClip menuClip;
         private AudioClip pauseClip;
         private AudioClip restartClip;
@@ -55,10 +56,12 @@ namespace ShadowClone.Presentation
         private PlayerController playerController;
         private RecordingController recordingController;
         private CloneReplayController cloneReplayController;
+        private RoomResetManager roomResetManager;
         private PuzzleButton[] buttons = System.Array.Empty<PuzzleButton>();
         private DoorController[] doors = System.Array.Empty<DoorController>();
         private Hazard[] hazards = System.Array.Empty<Hazard>();
         private GoalZone[] goals = System.Array.Empty<GoalZone>();
+        private float lastHazardSoundTime = -1f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
@@ -90,6 +93,11 @@ namespace ShadowClone.Presentation
         public static void PlayLevelStart()
         {
             instance?.PlayClip(instance.levelStartClip, 0.22f);
+        }
+
+        public static void PlayStarCollected()
+        {
+            instance?.PlayClip(instance.starClip, 0.32f);
         }
 
         private void Awake()
@@ -153,6 +161,7 @@ namespace ShadowClone.Presentation
             PlayLevelStart();
 
             playerController = FindObjectOfType<PlayerController>();
+            roomResetManager = FindObjectOfType<RoomResetManager>();
             recordingController = FindObjectOfType<RecordingController>();
             cloneReplayController = FindObjectOfType<CloneReplayController>();
             buttons = FindObjectsOfType<PuzzleButton>();
@@ -164,6 +173,11 @@ namespace ShadowClone.Presentation
             {
                 playerController.Jumped += HandleJumped;
                 playerController.Landed += HandleLanded;
+            }
+
+            if (roomResetManager != null)
+            {
+                roomResetManager.ResetCompleted += HandleResetCompleted;
             }
 
             if (recordingController != null)
@@ -205,6 +219,12 @@ namespace ShadowClone.Presentation
                 playerController.Jumped -= HandleJumped;
                 playerController.Landed -= HandleLanded;
                 playerController = null;
+            }
+
+            if (roomResetManager != null)
+            {
+                roomResetManager.ResetCompleted -= HandleResetCompleted;
+                roomResetManager = null;
             }
 
             if (recordingController != null)
@@ -301,12 +321,33 @@ namespace ShadowClone.Presentation
 
         private void HandleHazardTriggered()
         {
-            PlayClip(hazardClip, 0.28f);
+            PlayHazardSound();
+        }
+
+        private void HandleResetCompleted(string reason)
+        {
+            if (reason != "Fall reset" && reason != "Out of bounds")
+            {
+                return;
+            }
+
+            PlayHazardSound();
         }
 
         private void HandleGoalCompleted()
         {
             PlayClip(completeClip, 0.28f);
+        }
+
+        private void PlayHazardSound()
+        {
+            if (Time.unscaledTime - lastHazardSoundTime < 0.05f)
+            {
+                return;
+            }
+
+            lastHazardSoundTime = Time.unscaledTime;
+            PlayClip(hazardClip, 0.28f);
         }
 
         private void PlayClip(AudioClip clip, float volumeScale)
@@ -350,6 +391,7 @@ namespace ShadowClone.Presentation
             doorCloseClip = BuildSweepClip("doorClose", WaveShape.Sine, 300f, 0.2f, 0.16f, 130f, 0.005f, 0.03f);
             hazardClip = BuildNoiseBurstClip("hazard", 0.16f, 0.22f, 220f);
             completeClip = BuildChordClip("complete", 0.42f, 0.15f, new[] { 392f, 523.25f, 659.25f });
+            starClip = BuildChordClip("star", 0.18f, 0.15f, new[] { 659.25f, 783.99f, 1046.5f });
             menuClip = BuildChordClip("menu", 0.16f, 0.12f, new[] { 392f, 523.25f });
             pauseClip = BuildSweepClip("pause", WaveShape.Triangle, 540f, 0.11f, 0.13f, 320f, 0f, 0f);
             restartClip = BuildSweepClip("restart", WaveShape.Square, 300f, 0.15f, 0.14f, 620f, 0.01f, 0.01f);
