@@ -55,10 +55,21 @@ namespace ShadowClone.UI
         private float successOverlayTimer;
         private float onboardingTimer;
         private float starBindRetryTimer;
+        private string currentOnboardingMessage;
 
         public static void ShowOnboardingPrompt(string message, float duration = 3.2f)
         {
             instance?.ShowOnboarding(message, duration);
+        }
+
+        public static void HideOnboardingPrompt()
+        {
+            instance?.HideOnboarding();
+        }
+
+        public static void HideOnboardingPrompt(string message)
+        {
+            instance?.HideOnboarding(message);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -239,8 +250,9 @@ namespace ShadowClone.UI
             onboardingRect.anchorMax = new Vector2(0.5f, 1f);
             onboardingRect.pivot = new Vector2(0.5f, 1f);
             onboardingRect.anchoredPosition = new Vector2(0f, -80f);
-            onboardingRect.sizeDelta = new Vector2(760f, 72f);
+            onboardingRect.sizeDelta = new Vector2(760f, 104f);
             onboardingLabel = CreateText("OnboardingLabel", onboardingPanel.transform, 28, TextAlignmentOptions.Center, string.Empty, TypographyRole.Hud);
+            onboardingLabel.richText = true;
             RectTransform onboardingLabelRect = onboardingLabel.rectTransform;
             onboardingLabelRect.anchorMin = Vector2.zero;
             onboardingLabelRect.anchorMax = Vector2.one;
@@ -264,6 +276,7 @@ namespace ShadowClone.UI
             completionTitle = CreateText("CompletionTitle", completionPanel.transform, 42, TextAlignmentOptions.Center, "COMPLETE", TypographyRole.Title);
             completionBody = CreateText("CompletionBody", completionPanel.transform, 24, TextAlignmentOptions.Center,
                 "ROOM CLEAR", TypographyRole.Hud);
+            ConfigureCompletionTextLayout();
 
             nextLevelButton = CreateButton("NextLevelButton", completionPanel.transform, "NEXT", new Vector2(0f, -12f), LoadNextLevel);
             CreateButton("ReplayLevelButton", completionPanel.transform, "REPLAY", new Vector2(0f, -72f), RestartRoom);
@@ -462,12 +475,14 @@ namespace ShadowClone.UI
             if (hasNextLevel)
             {
                 completionTitle.text = "COMPLETE";
+                completionTitle.fontSize = 42;
                 completionBody.text = GetCompletionBodyText("ROOM CLEAR");
                 nextLevelButton.gameObject.SetActive(true);
             }
             else
             {
-                completionTitle.text = "PROTOTYPE COMPLETE";
+                completionTitle.text = "DEMO\nCOMPLETE";
+                completionTitle.fontSize = 38;
                 completionBody.text = GetCompletionBodyText("SIMULATION CLEAR");
                 nextLevelButton.gameObject.SetActive(false);
             }
@@ -564,6 +579,26 @@ namespace ShadowClone.UI
             textRect.sizeDelta = Vector2.zero;
 
             return button;
+        }
+
+        private void ConfigureCompletionTextLayout()
+        {
+            if (completionTitle != null)
+            {
+                RectTransform titleRect = completionTitle.rectTransform;
+                titleRect.anchoredPosition = new Vector2(0f, -24f);
+                titleRect.sizeDelta = new Vector2(640f, 92f);
+                completionTitle.lineSpacing = -16f;
+            }
+
+            if (completionBody != null)
+            {
+                RectTransform bodyRect = completionBody.rectTransform;
+                bodyRect.anchoredPosition = new Vector2(0f, -132f);
+                bodyRect.sizeDelta = new Vector2(640f, 48f);
+                completionBody.fontSize = 20f;
+                completionBody.lineSpacing = -10f;
+            }
         }
 
         private void RebindSceneDependencies()
@@ -782,9 +817,31 @@ namespace ShadowClone.UI
             }
 
             onboardingLabel.text = TypographyTheme.NormalizeToken(message);
+            currentOnboardingMessage = message;
             onboardingTimer = Mathf.Max(0.5f, duration);
             onboardingPanel.SetActive(true);
             UpdateOnboardingPrompt();
+        }
+
+        private void HideOnboarding()
+        {
+            onboardingTimer = 0f;
+            currentOnboardingMessage = null;
+
+            if (onboardingPanel != null)
+            {
+                onboardingPanel.SetActive(false);
+            }
+        }
+
+        private void HideOnboarding(string message)
+        {
+            if (!string.Equals(currentOnboardingMessage, message, System.StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            HideOnboarding();
         }
 
         private void UpdateOnboardingPrompt()
