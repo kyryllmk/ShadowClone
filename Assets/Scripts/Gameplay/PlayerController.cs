@@ -12,10 +12,14 @@ namespace ShadowClone.Gameplay
         [Header("References")]
         [SerializeField] private GroundCheck groundCheck;
 
+        [Header("Physics")]
+        [SerializeField] private bool applyNoFrictionMaterial = true;
+
         private Rigidbody2D body;
         private float moveInput;
         private bool wasGrounded;
         private bool hasJumpAvailable;
+        private PhysicsMaterial2D noFrictionMaterial;
 
         public bool IsGrounded => groundCheck != null && groundCheck.IsGrounded;
         public bool IsMovementLocked { get; private set; }
@@ -27,6 +31,7 @@ namespace ShadowClone.Gameplay
         private void Awake()
         {
             body = GetComponent<Rigidbody2D>();
+            ApplyNoFrictionMaterial();
         }
 
         private void Start()
@@ -98,6 +103,32 @@ namespace ShadowClone.Gameplay
             {
                 moveInput = 0f;
                 body.velocity = new Vector2(0f, body.velocity.y);
+            }
+        }
+
+        private void ApplyNoFrictionMaterial()
+        {
+            if (!applyNoFrictionMaterial)
+            {
+                return;
+            }
+
+            noFrictionMaterial = new PhysicsMaterial2D("Player_NoFriction_Runtime")
+            {
+                friction = 0f,
+                bounciness = 0f
+            };
+
+            Collider2D[] colliders = GetComponentsInChildren<Collider2D>();
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                Collider2D playerCollider = colliders[i];
+                if (playerCollider == null || playerCollider.isTrigger)
+                {
+                    continue;
+                }
+
+                playerCollider.sharedMaterial = noFrictionMaterial;
             }
         }
     }

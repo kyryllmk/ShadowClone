@@ -9,6 +9,9 @@ namespace ShadowClone.Level
     {
         [SerializeField] private string message;
         [SerializeField] private float duration = 3.2f;
+        [SerializeField] private TutorialProgressSection progressSection;
+        [SerializeField] private TutorialProgressAction progressAction;
+        [SerializeField] private bool replayAfterReset;
 
         private bool hasTriggered;
 
@@ -20,7 +23,24 @@ namespace ShadowClone.Level
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (hasTriggered || other.GetComponentInParent<PlayerController>() == null)
+            if (other.GetComponentInParent<PlayerController>() == null)
+            {
+                return;
+            }
+
+            if (progressSection != TutorialProgressSection.None)
+            {
+                if (progressAction == TutorialProgressAction.Complete)
+                {
+                    LevelOneOnboardingBootstrap.CompleteProgressSection(progressSection);
+                    return;
+                }
+
+                LevelOneOnboardingBootstrap.TryShowProgressPrompt(progressSection, message, duration);
+                return;
+            }
+
+            if (hasTriggered)
             {
                 return;
             }
@@ -33,6 +53,28 @@ namespace ShadowClone.Level
         {
             message = prompt;
             duration = promptDuration;
+        }
+
+        public void Configure(
+            string prompt,
+            float promptDuration,
+            TutorialProgressSection section,
+            TutorialProgressAction action,
+            bool shouldReplayAfterReset = false)
+        {
+            message = prompt;
+            duration = promptDuration;
+            progressSection = section;
+            progressAction = action;
+            replayAfterReset = shouldReplayAfterReset;
+        }
+
+        public void ResetForAttempt()
+        {
+            if (replayAfterReset)
+            {
+                hasTriggered = false;
+            }
         }
     }
 }

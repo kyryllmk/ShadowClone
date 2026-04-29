@@ -1,4 +1,5 @@
 using System;
+using ShadowClone.Gameplay;
 using UnityEngine;
 
 namespace ShadowClone.Clone
@@ -24,6 +25,7 @@ namespace ShadowClone.Clone
 
             ClearClone();
             activeClone = Instantiate(clonePrefab, clip.Frames[0].Position, Quaternion.identity, cloneParent);
+            IgnorePlayerCollision(activeClone);
             activeClone.ReplayFinished += HandleReplayFinished;
             activeClone.Play(clip.Frames);
             ReplayStarted?.Invoke();
@@ -55,6 +57,43 @@ namespace ShadowClone.Clone
             Destroy(activeClone.gameObject);
             activeClone = null;
             ReplayFinished?.Invoke();
+        }
+
+        private static void IgnorePlayerCollision(CloneActor clone)
+        {
+            if (clone == null)
+            {
+                return;
+            }
+
+            PlayerController player = FindObjectOfType<PlayerController>();
+            if (player == null)
+            {
+                return;
+            }
+
+            Collider2D[] playerColliders = player.GetComponentsInChildren<Collider2D>();
+            Collider2D[] cloneColliders = clone.GetComponentsInChildren<Collider2D>();
+
+            for (int playerIndex = 0; playerIndex < playerColliders.Length; playerIndex++)
+            {
+                Collider2D playerCollider = playerColliders[playerIndex];
+                if (playerCollider == null)
+                {
+                    continue;
+                }
+
+                for (int cloneIndex = 0; cloneIndex < cloneColliders.Length; cloneIndex++)
+                {
+                    Collider2D cloneCollider = cloneColliders[cloneIndex];
+                    if (cloneCollider == null)
+                    {
+                        continue;
+                    }
+
+                    Physics2D.IgnoreCollision(playerCollider, cloneCollider, true);
+                }
+            }
         }
     }
 }
