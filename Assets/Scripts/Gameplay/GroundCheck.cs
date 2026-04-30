@@ -1,4 +1,3 @@
-using ShadowClone.Clone;
 using ShadowClone.Level;
 using UnityEngine;
 
@@ -111,8 +110,7 @@ namespace ShadowClone.Gameplay
                 return false;
             }
 
-            if (hitCollider.GetComponentInParent<CloneActor>() != null ||
-                hitCollider.GetComponentInParent<ResetFloor>() != null ||
+            if (hitCollider.GetComponentInParent<ResetFloor>() != null ||
                 hitCollider.GetComponentInParent<Hazard>() != null ||
                 hitCollider.GetComponentInParent<PuzzleButton>() != null ||
                 hitCollider.GetComponentInParent<DoorController>() != null)
