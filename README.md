@@ -71,9 +71,9 @@ Controls can be adjusted once implementation begins, but they should remain mini
 
 Placeholder:
 
-- `docs/media/screenshot-01.png`
-- `docs/media/screenshot-02.png`
-- `docs/media/screenshot-03.png`
+- `docs/media/screenshot-01-tutorial.png`
+- `docs/media/screenshot-02-replay-gate.png`
+- `docs/media/screenshot-03-recorded-exit.png`
 
 ## Gameplay Video
 
