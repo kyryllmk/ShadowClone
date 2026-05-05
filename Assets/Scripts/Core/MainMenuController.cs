@@ -65,6 +65,10 @@ namespace ShadowClone.Core
         public void Quit()
         {
             PresentationFeedbackBootstrap.PlayMenuConfirm();
+#if UNITY_WEBGL
+            SceneManager.LoadScene(SceneRegistry.MainMenu);
+            return;
+#else
             if (Application.isEditor)
             {
 #if UNITY_EDITOR
@@ -74,6 +78,7 @@ namespace ShadowClone.Core
             }
 
             Application.Quit();
+#endif
         }
 
         private void CacheMenuReferences()
