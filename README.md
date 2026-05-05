@@ -71,7 +71,11 @@ Controls can be adjusted once implementation begins, but they should remain mini
 
 ![Tutorial room](docs/media/screenshot-01-tutorial.png)
 
+---
+
 ![Replay gate puzzle](docs/media/screenshot-02-replay-gate.png)
+
+---
 
 ![Recorded exit setup](docs/media/screenshot-03-recorded-exit.png)
 
