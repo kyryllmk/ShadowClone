@@ -69,11 +69,11 @@ Controls can be adjusted once implementation begins, but they should remain mini
 
 ## Screenshots
 
-Placeholder:
+![Tutorial room](docs/media/screenshot-01-tutorial.png)
 
-- `docs/media/screenshot-01-tutorial.png`
-- `docs/media/screenshot-02-replay-gate.png`
-- `docs/media/screenshot-03-recorded-exit.png`
+![Replay gate puzzle](docs/media/screenshot-02-replay-gate.png)
+
+![Recorded exit setup](docs/media/screenshot-03-recorded-exit.png)
 
 ## Gameplay Video
 
